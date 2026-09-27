@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx src/scripts/seed.ts",
-    "test": "tsx src/tests/db.test.ts"
+    "test": "tsx src/tests/db.test.ts && tsx src/tests/phase3.test.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",

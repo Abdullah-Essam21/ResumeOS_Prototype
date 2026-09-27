@@ -19,8 +19,23 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { profileRepository } from "@/lib/db/repositories/profile.repository";
+import { vaultRepository } from "@/lib/db/repositories/vault.repository";
+import { resumesRepository } from "@/lib/db/repositories/resumes.repository";
+import { versionsRepository } from "@/lib/db/repositories/versions.repository";
+
+export const dynamic = "force-dynamic";
 
 export default function DashboardPage() {
+  const profile = profileRepository.getProfile();
+  const vaultItems = vaultRepository.getVaultItems({ includeArchived: false });
+  const resumes = resumesRepository.getResumes({ includeArchived: false });
+  
+  // Calculate total saved versions
+  const totalVersions = resumes.reduce((acc, r) => {
+    return acc + versionsRepository.getVersionsByResumeId(r.id).length;
+  }, 0);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
       {/* Welcome Hero */}
@@ -31,7 +46,7 @@ export default function DashboardPage() {
               variant="outline"
               className="border-indigo-400/40 text-indigo-200 bg-indigo-950/40"
             >
-              ResumeOS Prototype
+              ResumeOS Prototype • {profile.fullName}
             </Badge>
             <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               Assemble, customize, and export tailored resumes.
@@ -80,11 +95,11 @@ export default function DashboardPage() {
             <div className="grid grid-cols-3 gap-3 rounded-lg bg-slate-50 p-4 text-center border border-slate-100">
               <div>
                 <p className="text-xs font-medium text-slate-500">Items</p>
-                <p className="text-xl font-bold text-slate-800 mt-0.5">0</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">{vaultItems.length}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500">Categories</p>
-                <p className="text-xl font-bold text-slate-800 mt-0.5">6</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">7</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500">Storage</p>
@@ -121,7 +136,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-3 gap-3 rounded-lg bg-slate-50 p-4 text-center border border-slate-100">
               <div>
                 <p className="text-xs font-medium text-slate-500">Active</p>
-                <p className="text-xl font-bold text-slate-800 mt-0.5">0</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">{resumes.length}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500">Templates</p>
@@ -129,7 +144,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500">Versions</p>
-                <p className="text-xl font-bold text-slate-800 mt-0.5">0</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">{totalVersions}</p>
               </div>
             </div>
           </CardContent>

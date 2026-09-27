@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { FileText, Database, LayoutDashboard, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ProfileButton } from "./profile-button";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -60,9 +61,10 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge variant="success" className="gap-1 font-mono text-[11px]">
+          <ProfileButton />
+          <Badge variant="success" className="gap-1 font-mono text-[11px] hidden sm:inline-flex">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Local-First Mode
+            Local-First
           </Badge>
         </div>
       </div>
