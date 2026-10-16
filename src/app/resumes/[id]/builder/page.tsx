@@ -1,14 +1,23 @@
 import Link from "next/link";
-import { ArrowLeft, Sliders, Eye, Printer, History } from "lucide-react";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Sliders, Eye, Printer, History, Copy, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { resumesRepository } from "@/lib/db/repositories/resumes.repository";
 
 interface BuilderPageProps {
   params: Promise<{ id: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function ResumeBuilderPage({ params }: BuilderPageProps) {
   const { id } = await params;
+  const resume = resumesRepository.getResumeById(id);
+
+  if (!resume) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -22,13 +31,27 @@ export default async function ResumeBuilderPage({ params }: BuilderPageProps) {
             </Button>
           </Link>
           <div className="h-4 w-[1px] bg-slate-200" />
-          <h2 className="font-semibold text-slate-800 text-sm">
-            Resume #{id}
-          </h2>
-          <Badge variant="secondary" className="text-[10px]">Draft</Badge>
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-slate-900 text-sm">
+              {resume.name}
+            </h2>
+            {resume.draft.professionalTitle && (
+              <span className="text-xs text-indigo-600 font-medium hidden sm:inline-flex items-center gap-1">
+                <Sparkles className="h-3 w-3" />
+                {resume.draft.professionalTitle}
+              </span>
+            )}
+            <Badge variant="secondary" className="text-[10px]">Draft</Badge>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
+          <Link href="/resumes/new">
+            <Button variant="outline" size="sm" className="gap-1.5 text-indigo-700 border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50">
+              <Copy className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Fork Variant</span>
+            </Button>
+          </Link>
           <Link href={`/resumes/${id}/versions`}>
             <Button variant="outline" size="sm">
               <History className="h-3.5 w-3.5 mr-1" />

@@ -147,6 +147,34 @@ export default function DashboardPage() {
                 <p className="text-xl font-bold text-slate-800 mt-0.5">{totalVersions}</p>
               </div>
             </div>
+
+            {resumes.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  Active Variants
+                </p>
+                <div className="space-y-1.5">
+                  {resumes.slice(0, 3).map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-xs border border-slate-100 hover:bg-slate-100/80 transition-colors"
+                    >
+                      <div className="truncate mr-2">
+                        <p className="font-semibold text-slate-800 truncate">{r.name}</p>
+                        <p className="text-[11px] text-slate-500 truncate">
+                          {r.draft.professionalTitle || "No title specified"}
+                        </p>
+                      </div>
+                      <Link href={`/resumes/${r.id}/builder`}>
+                        <Button variant="ghost" size="sm" className="h-7 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+                          Open
+                        </Button>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
           <CardFooter className="border-t border-slate-100 pt-4">
             <Link href="/resumes" className="w-full">

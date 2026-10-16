@@ -5,6 +5,7 @@ import {
   resumesRepository,
   GetResumesOptions,
   UpdateResumeInput,
+  DuplicateResumeOptions,
 } from "@/lib/db/repositories/resumes.repository";
 import {
   Resume,
@@ -80,10 +81,10 @@ export async function updateResumeAction(
 
 export async function duplicateResumeAction(
   id: string,
-  newName?: string
+  options?: string | DuplicateResumeOptions
 ): Promise<{ success: boolean; data?: Resume; error?: string }> {
   try {
-    const duplicated = resumesRepository.duplicateResume(id, newName);
+    const duplicated = resumesRepository.duplicateResume(id, options);
     revalidatePath("/resumes");
     revalidatePath("/");
     return { success: true, data: duplicated };

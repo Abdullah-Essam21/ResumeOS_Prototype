@@ -48,6 +48,7 @@ export function ResumesView({ initialResumes }: ResumesViewProps) {
   const [duplicateDialogOpen, setDuplicateDialogOpen] = React.useState(false);
   const [duplicatingResume, setDuplicatingResume] = React.useState<Resume | null>(null);
   const [duplicateName, setDuplicateName] = React.useState("");
+  const [duplicateTitle, setDuplicateTitle] = React.useState("");
   const [isDuplicating, setIsDuplicating] = React.useState(false);
 
   // Rename Dialog state
@@ -59,7 +60,8 @@ export function ResumesView({ initialResumes }: ResumesViewProps) {
 
   const handleOpenDuplicate = (resume: Resume) => {
     setDuplicatingResume(resume);
-    setDuplicateName(`${resume.name} (Copy)`);
+    setDuplicateName(`${resume.name} (Variant)`);
+    setDuplicateTitle(resume.draft.professionalTitle || "");
     setDuplicateDialogOpen(true);
   };
 
@@ -68,10 +70,10 @@ export function ResumesView({ initialResumes }: ResumesViewProps) {
     if (!duplicatingResume) return;
     setIsDuplicating(true);
 
-    const res = await duplicateResumeAction(
-      duplicatingResume.id,
-      duplicateName.trim() || undefined
-    );
+    const res = await duplicateResumeAction(duplicatingResume.id, {
+      name: duplicateName.trim() || undefined,
+      professionalTitle: duplicateTitle.trim() || undefined,
+    });
     setIsDuplicating(false);
 
     if (res.success && res.data) {
@@ -278,8 +280,20 @@ export function ResumesView({ initialResumes }: ResumesViewProps) {
           </DialogHeader>
 
           <form onSubmit={handleConfirmDuplicate} className="space-y-4 mt-4">
+            {duplicatingResume && (
+              <div className="rounded-lg bg-slate-50 p-3.5 border border-slate-100 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-slate-400 font-medium">Forking from:</span>
+                  <p className="font-semibold text-slate-800">{duplicatingResume.name}</p>
+                </div>
+                <Badge variant="outline" className="text-[11px] font-mono">
+                  {duplicatingResume.draft.sections.length} sections copied
+                </Badge>
+              </div>
+            )}
+
             <div className="space-y-1.5">
-              <Label htmlFor="duplicateName">New Resume Name *</Label>
+              <Label htmlFor="duplicateName">New Resume Variant Name *</Label>
               <Input
                 id="duplicateName"
                 required
@@ -287,9 +301,23 @@ export function ResumesView({ initialResumes }: ResumesViewProps) {
                 onChange={(e) => setDuplicateName(e.target.value)}
                 placeholder="e.g. Power BI Developer Resume"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="duplicateTitle">Target Professional Title</Label>
+              <Input
+                id="duplicateTitle"
+                value={duplicateTitle}
+                onChange={(e) => setDuplicateTitle(e.target.value)}
+                placeholder="e.g. Power BI Developer"
+              />
               <p className="text-[11px] text-slate-500">
-                You will be redirected to the Builder to adjust titles and selected items.
+                You can change this or customize items anytime inside the Builder.
               </p>
+            </div>
+
+            <div className="rounded-lg bg-indigo-50/60 p-3 text-[11px] text-indigo-900 border border-indigo-100 leading-relaxed">
+              💡 <strong>Invariant 2:</strong> This variant is completely independent. Changes made here will never modify the original resume.
             </div>
 
             <DialogFooter>

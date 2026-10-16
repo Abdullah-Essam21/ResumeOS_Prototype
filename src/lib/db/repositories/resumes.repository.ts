@@ -53,6 +53,11 @@ export interface UpdateResumeInput {
   draft?: ResumeDraft;
 }
 
+export interface DuplicateResumeOptions {
+  name?: string;
+  professionalTitle?: string;
+}
+
 export class ResumesRepository {
   constructor(private db: Database.Database = getDb()) {}
 
@@ -148,15 +153,21 @@ export class ResumesRepository {
     return this.getResumeById(id);
   }
 
-  duplicateResume(id: string, newName?: string): Resume {
+  duplicateResume(id: string, options?: string | DuplicateResumeOptions): Resume {
     const original = this.getResumeById(id);
     if (!original) {
       throw new Error(`Cannot duplicate resume: resume ${id} not found.`);
     }
 
-    const duplicateName = newName?.trim() || `${original.name} (Copy)`;
+    const opts: DuplicateResumeOptions =
+      typeof options === "string" ? { name: options } : options ?? {};
+
+    const duplicateName = opts.name?.trim() || `${original.name} (Copy)`;
     // Create deep copy of draft
     const clonedDraft: ResumeDraft = JSON.parse(JSON.stringify(original.draft));
+    if (opts.professionalTitle !== undefined) {
+      clonedDraft.professionalTitle = opts.professionalTitle.trim();
+    }
 
     return this.createResume({
       name: duplicateName,

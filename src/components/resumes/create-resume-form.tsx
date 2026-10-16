@@ -44,18 +44,22 @@ export function CreateResumeForm({ existingResumes }: CreateResumeFormProps) {
     return existingResumes.length > 0 ? existingResumes[0].id : "";
   });
   const [variantName, setVariantName] = React.useState("");
+  const [variantTitle, setVariantTitle] = React.useState(() => {
+    return existingResumes.length > 0 ? existingResumes[0].draft.professionalTitle || "" : "";
+  });
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
   const selectedBaseResume = existingResumes.find((r) => r.id === selectedBaseId);
 
-  // When selected base resume changes, auto-suggest variant name
+  // When selected base resume changes, auto-suggest variant name and title
   const handleBaseChange = (id: string) => {
     setSelectedBaseId(id);
     const match = existingResumes.find((r) => r.id === id);
     if (match) {
       setVariantName(`${match.name} (Variant)`);
+      setVariantTitle(match.draft.professionalTitle || "");
     }
   };
 
@@ -138,10 +142,10 @@ export function CreateResumeForm({ existingResumes }: CreateResumeFormProps) {
     setIsSubmitting(true);
     setErrorMsg(null);
 
-    const res = await duplicateResumeAction(
-      selectedBaseId,
-      variantName.trim() || undefined
-    );
+    const res = await duplicateResumeAction(selectedBaseId, {
+      name: variantName.trim() || undefined,
+      professionalTitle: variantTitle.trim() || undefined,
+    });
 
     setIsSubmitting(false);
 
@@ -365,6 +369,23 @@ export function CreateResumeForm({ existingResumes }: CreateResumeFormProps) {
                   onChange={(e) => setVariantName(e.target.value)}
                   placeholder="e.g. Power BI Developer Resume"
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="variantTitle">Target Professional Title</Label>
+                <Input
+                  id="variantTitle"
+                  value={variantTitle}
+                  onChange={(e) => setVariantTitle(e.target.value)}
+                  placeholder="e.g. Power BI Developer"
+                />
+                <p className="text-[11px] text-slate-500">
+                  Headline displayed on the top of the resume variant.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-indigo-50/60 p-3 text-[11px] text-indigo-900 border border-indigo-100 leading-relaxed">
+                💡 <strong>Invariant 2:</strong> Changes made to this new variant will never alter the base resume.
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
