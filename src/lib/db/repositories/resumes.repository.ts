@@ -8,6 +8,7 @@ import {
   ResumeDraftSchema,
   CreateResumeInput,
   CreateResumeSchema,
+  getDefaultResumeDraft,
 } from "@/lib/types/resume";
 
 interface ResumeRow {
@@ -78,10 +79,7 @@ export class ResumesRepository {
     const id = randomUUID();
     const now = new Date().toISOString();
 
-    const initialDraft: ResumeDraft = validated.draft ?? {
-      professionalTitle: "",
-      sections: [],
-    };
+    const initialDraft: ResumeDraft = validated.draft ?? getDefaultResumeDraft();
     const draftJson = JSON.stringify(initialDraft);
 
     this.db

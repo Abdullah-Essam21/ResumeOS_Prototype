@@ -41,6 +41,56 @@ export const ResumeDraftSchema = z.object({
 
 export type ResumeDraft = z.infer<typeof ResumeDraftSchema>;
 
+export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDraft {
+  return {
+    professionalTitle,
+    sections: [
+      {
+        id: "experience",
+        type: "experience",
+        displayName: "Work Experience",
+        visible: true,
+        items: [],
+      },
+      {
+        id: "projects",
+        type: "projects",
+        displayName: "Key Projects",
+        visible: true,
+        items: [],
+      },
+      {
+        id: "education",
+        type: "education",
+        displayName: "Education",
+        visible: true,
+        items: [],
+      },
+      {
+        id: "skills",
+        type: "skills",
+        displayName: "Technical Skills",
+        visible: true,
+        items: [],
+      },
+      {
+        id: "certifications",
+        type: "certifications",
+        displayName: "Certifications",
+        visible: true,
+        items: [],
+      },
+      {
+        id: "achievements",
+        type: "achievements",
+        displayName: "Achievements & Honors",
+        visible: true,
+        items: [],
+      },
+    ],
+  };
+}
+
 export const ResumeSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Resume name is required"),
