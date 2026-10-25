@@ -155,7 +155,7 @@ function ProjectEntry({ item }: { item: ResolvedResumeItem }) {
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-black underline underline-offset-2 hover:opacity-80"
+              className="font-bold text-black no-underline hover:opacity-80 cursor-pointer"
               title="View on GitHub"
             >
               {title}
@@ -322,6 +322,15 @@ function SectionContent({ section }: { section: ResolvedResumeSection }) {
  * ClassicTemplateV1
  * Professional ATS-friendly single-column layout modeled faithfully after
  * Jake's Resume LaTeX template (Abdullah_Ramadan_Resume.tex).
+ *
+ * Key characteristics:
+ * - Single-column semantic flow (100% ATS parseable)
+ * - Pure black text on white background
+ * - Centered header with name, target role title, and contact links
+ * - Full-width uppercase section titles with bottom horizontal rule
+ * - Two-tier subheadings with left title/org and right date/location
+ * - Tight, compact bullet list with bold inline highlights
+ * - Project and Experience titles with links render without underlines
  */
 export function ClassicTemplateV1({
   snapshot,
