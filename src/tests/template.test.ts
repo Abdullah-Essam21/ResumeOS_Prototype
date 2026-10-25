@@ -44,6 +44,7 @@ async function runTemplateTests() {
       startDate: "",
       endDate: "Expected Jun 2026",
       location: "CGPA: 3.61 / 4.0",
+      link: "",
       bullets: [],
     },
   });
@@ -56,7 +57,8 @@ async function runTemplateTests() {
       title: "Power BI Specialist Intern",
       startDate: "Jun 2025",
       endDate: "Feb 2026",
-      location: "Certificate",
+      location: "Cairo, Egypt",
+      link: "https://depi.gov.eg",
       bullets: [
         "Completed intensive training in Data Analytics, Statistics, and delivered **three freelance data projects**.",
         "Led the final project team: assigned tasks, coordinated effort and ensured all deadlines were met.",
@@ -70,6 +72,7 @@ async function runTemplateTests() {
     content: {
       title: "Egyptian News Analytics Pipeline",
       organization: "Python, Airflow, Docker, Scrapy, PyArrow, BigQuery",
+      link: "https://github.com/Abdullah-Essam21/news_pipline",
       bullets: [
         "Built a containerized Airflow pipeline that scrapes **2M+ articles** (2013–2026).",
         "Wrote adaptive parsing logic achieving **100% content capture**.",
@@ -115,6 +118,7 @@ async function runTemplateTests() {
     visible: true,
     overrides: {
       title: "Senior Power BI Specialist Intern", // Override role for this variant!
+      link: "https://depi-alumni.gov.eg", // Override link for this variant!
     },
   });
 
@@ -149,12 +153,14 @@ async function runTemplateTests() {
   // Original was "Power BI Specialist Intern", override is "Senior Power BI Specialist Intern"
   assert.equal(resolvedExpSec.items[0].content.title, "Power BI Specialist Intern");
   assert.equal(resolvedExpSec.items[0].resolvedContent.title, "Senior Power BI Specialist Intern");
+  assert.equal(resolvedExpSec.items[0].resolvedContent.link, "https://depi-alumni.gov.eg");
 
-  // 6. Test timeline item bullets & formatting
-  console.log("Test 5: Verify project tech stack and bullets");
+  // 6. Test timeline item bullets & GitHub project link
+  console.log("Test 5: Verify project GitHub link, tech stack, and bullets");
   const resolvedProjSec = snapshot.sections.find((s) => s.type === "projects")!;
   assert.equal(resolvedProjSec.items.length, 1);
   assert.equal(resolvedProjSec.items[0].resolvedContent.title, "Egyptian News Analytics Pipeline");
+  assert.equal(resolvedProjSec.items[0].resolvedContent.link, "https://github.com/Abdullah-Essam21/news_pipline");
   const bullets = resolvedProjSec.items[0].resolvedContent.bullets as string[];
   assert.ok(bullets[0].includes("**2M+ articles**"));
 

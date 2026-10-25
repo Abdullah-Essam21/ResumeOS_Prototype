@@ -97,6 +97,12 @@ function VaultItemInnerForm({
     }
     return "";
   });
+  const [timelineLink, setTimelineLink] = React.useState(() => {
+    if (editingItem && editingItem.layout === "timeline") {
+      return (editingItem.content as TimelineContent).link || "";
+    }
+    return "";
+  });
   const [timelineBullets, setTimelineBullets] = React.useState<string[]>(() => {
     if (editingItem && editingItem.layout === "timeline") {
       const bullets = (editingItem.content as TimelineContent).bullets;
@@ -201,6 +207,7 @@ function VaultItemInnerForm({
         startDate: timelineStartDate.trim(),
         endDate: timelineEndDate.trim(),
         location: timelineLocation.trim(),
+        link: timelineLink.trim(),
         bullets: filteredBullets,
       };
     } else if (layout === "record") {
@@ -337,14 +344,37 @@ function VaultItemInnerForm({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="timelineLocation">Location</Label>
+              <Label htmlFor="timelineLocation">Location / Subtitle</Label>
               <Input
                 id="timelineLocation"
-                placeholder="e.g. Cairo, Egypt (or Remote)"
+                placeholder="e.g. Cairo, Egypt (or CGPA: 3.6)"
                 value={timelineLocation}
                 onChange={(e) => setTimelineLocation(e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="timelineLink">
+              {category === "project"
+                ? "GitHub Repository / Project URL (Optional)"
+                : "Company / Role / Certificate URL (Optional)"}
+            </Label>
+            <Input
+              id="timelineLink"
+              placeholder={
+                category === "project"
+                  ? "https://github.com/username/project"
+                  : "https://example.com"
+              }
+              value={timelineLink}
+              onChange={(e) => setTimelineLink(e.target.value)}
+            />
+            <p className="text-[11px] text-slate-500">
+              {category === "project"
+                ? "Clickable GitHub link shown on the right and on the project heading."
+                : "Allows recruiters to click on the title without showing an underline on the resume."}
+            </p>
           </div>
 
           <div className="space-y-2">

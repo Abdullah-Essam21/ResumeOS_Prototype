@@ -57,6 +57,7 @@ function TimelineEntry({
   const bullets = Array.isArray(c.bullets) ? (c.bullets as string[]) : [];
 
   const isEducation = sectionType === "education";
+  const isExperience = sectionType === "experience";
 
   // In Jake's Resume:
   // Education: Row 1 = [University, Date/CGPA], Row 2 = [Major / Degree, Location]
@@ -75,7 +76,19 @@ function TimelineEntry({
     <div className="mb-2 last:mb-0">
       {/* Top Row: Primary Title / Org on left, Date / GPA on right */}
       <div className="flex items-baseline justify-between text-[11.5px] leading-snug">
-        <span className="font-bold text-black">{topPrimary}</span>
+        {isExperience && link ? (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-black no-underline hover:opacity-80 cursor-pointer"
+            title="Open link"
+          >
+            {topPrimary}
+          </a>
+        ) : (
+          <span className="font-bold text-black">{topPrimary}</span>
+        )}
         {topSecondary && (
           <span className="text-black font-normal shrink-0 ml-2">
             {topSecondary}
@@ -84,13 +97,13 @@ function TimelineEntry({
       </div>
 
       {/* Second Row: Role / Major on left, Location or Certificate Link on right */}
-      {(bottomPrimary || location || link) && (
+      {(bottomPrimary || location || (!isExperience && link)) && (
         <div className="flex items-baseline justify-between text-[11px] leading-snug">
           <span className="italic text-black font-normal">
             {bottomPrimary}
           </span>
           <span className="italic text-black shrink-0 ml-2">
-            {link ? (
+            {!isExperience && link ? (
               <a
                 href={link}
                 target="_blank"
@@ -137,7 +150,19 @@ function ProjectEntry({ item }: { item: ResolvedResumeItem }) {
       {/* Heading: Bold Project Name | Italic Technologies, Right-aligned Link */}
       <div className="flex items-baseline justify-between text-[11.5px] leading-snug">
         <div className="text-black">
-          <span className="font-bold">{title}</span>
+          {link ? (
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-black underline underline-offset-2 hover:opacity-80"
+              title="View on GitHub"
+            >
+              {title}
+            </a>
+          ) : (
+            <span className="font-bold">{title}</span>
+          )}
           {techStack && (
             <>
               <span className="mx-1.5 text-black font-normal">|</span>
@@ -297,14 +322,6 @@ function SectionContent({ section }: { section: ResolvedResumeSection }) {
  * ClassicTemplateV1
  * Professional ATS-friendly single-column layout modeled faithfully after
  * Jake's Resume LaTeX template (Abdullah_Ramadan_Resume.tex).
- *
- * Key characteristics:
- * - Single-column semantic flow (100% ATS parseable)
- * - Pure black text on white background
- * - Centered header with name, target role title, and contact links
- * - Full-width uppercase section titles with bottom horizontal rule
- * - Two-tier subheadings with left title/org and right date/location
- * - Tight, compact bullet list with bold inline highlights
  */
 export function ClassicTemplateV1({
   snapshot,

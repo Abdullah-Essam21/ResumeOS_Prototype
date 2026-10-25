@@ -22,6 +22,7 @@ export const TimelineContentSchema = z.object({
   startDate: z.string().optional().default(""),
   endDate: z.string().optional().default(""),
   location: z.string().optional().default(""),
+  link: z.string().optional().default(""),
   bullets: z.array(z.string()).default([]),
 });
 
@@ -97,4 +98,3 @@ export const UpdateVaultItemSchema = z.object({
 });
 
 export type UpdateVaultItemInput = z.input<typeof UpdateVaultItemSchema>;
-
