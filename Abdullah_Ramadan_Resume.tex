@@ -1,0 +1,166 @@
+%-------------------------
+% Resume based on Jake's Resume template (MIT License)
+%-------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+% Custom commands
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Abdullah Ramadan} \\ \vspace{3pt}
+    \large Data Analyst \textbar{} Power BI Specialist \\ \vspace{3pt}
+    \small Giza, Egypt $|$
+    \href{tel:+201005251762}{\underline{+20 100 525 1762}} $|$
+    \href{mailto:abdullahramadan661@gmail.com}{\underline{abdullahramadan661@gmail.com}} $|$
+    \href{https://www.linkedin.com/in/abdullah-ramadan661/}{\underline{LinkedIn}} $|$
+    \href{https://github.com/Abdullah-Essam21}{\underline{GitHub}}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Modern Academy for Computer Science \& Management Technology}{CGPA: 3.61 / 4.0}
+      {Major: Management Information Systems (MIS)}{}
+      % TODO: add graduation date, e.g. {Expected Jun 2026} in the empty brace above
+  \resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{BI \& Visualization}{: Power BI (DAX, Power Query, Data Modeling), Excel (Pivot Tables, Lookups), Looker Studio} \\
+     \textbf{Data Engineering}{: Apache Airflow, ETL/ELT, dbt, Star/Snowflake Schema, Data Warehousing, Google BigQuery} \\
+     \textbf{Languages \& Libraries}{: SQL (Window Functions, CTEs, Joins), Python (Pandas, Polars, PyArrow, PySpark, Scrapy)} \\
+     \textbf{Tools}{: Docker, Git/GitHub, Jupyter Notebooks, VS Code, Claude Code}
+    }}
+ \end{itemize}
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Egyptian News Analytics Pipeline} $|$ \emph{Python, Airflow, Docker, Scrapy, PyArrow, BigQuery}}{\href{https://github.com/Abdullah-Essam21/news_pipline}{\underline{GitHub}}}
+          \resumeItemListStart
+            \resumeItem{Built a containerized Airflow pipeline that scrapes \textbf{2M+ articles} (2013--2026) from a leading Egyptian news site, converts JSONL to Parquet with PyArrow, and loads them into BigQuery for SQL and Power BI trend analysis.}
+            \resumeItem{Wrote adaptive parsing logic for inconsistent HTML schemas, achieving \textbf{100\% content capture}.}
+            \resumeItem{Reached \textbf{1,200+ pages/min} scraping throughput using the Asyncio Proactor event loop.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{Egyptian Thanawya Amma 2024 \& 2025 Results Dashboard} $|$ \emph{Python, Polars, Power BI}}{\href{https://github.com/Abdullah-Essam21/Egyptian-Thanawya-Amma-2024-Dashboard}{\underline{GitHub}}}
+          \resumeItemListStart
+            \resumeItem{Scraped and consolidated \textbf{700K+ exam records} from multiple national systems using asynchronous Python; cleaned and validated them with Polars and Power Query.}
+            \resumeItem{Designed an interactive Power BI dashboard that identifies at-risk schools needing government support and flags statistical anomalies indicative of fraud.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{E-commerce Sales \& Logistics Analysis} $|$ \emph{Power BI, Power Query, DAX}}{\href{https://github.com/Abdullah-Essam21/Supply-Chain-Analytics-Dashboard-In-Power-Bi}{\underline{GitHub}}}
+          \resumeItemListStart
+            \resumeItem{Transformed a flat file of \textbf{180K+ rows and 50+ columns} into an optimized Star Schema in Power Query, including a role-playing date dimension (\texttt{USERELATIONSHIP}).}
+            \resumeItem{Wrote DAX measures for time intelligence, financial ratios and moving averages; built a dashboard covering operational bottlenecks and customer segmentation.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Power BI Specialist Intern}{Jun 2025 -- Feb 2026}
+      {Digital Egypt Pioneers Initiative (DEPI)}{\href{https://drive.google.com/file/d/11SxDxDuJZW7hVigGw6L17-LEO_tty_kU/view?usp=sharing}{\underline{Certificate}}}
+      \resumeItemListStart
+        \resumeItem{Completed intensive training in Data Analytics, Statistics, Excel, Power BI/DAX, Azure and Tableau, and delivered \textbf{three freelance data projects} for real clients.}
+        \resumeItem{Led the final project team: assigned tasks, coordinated effort and ensured all deadlines were met.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Business \& Sustainability Intern}{Aug 2025 -- Sep 2025}
+      {Commercial International Bank (CIB)}{\href{https://drive.google.com/file/d/1ZLAXv5plE2ZGpbVVy8S03Cb2eSB0BRa1/view?usp=drive_link}{\underline{Certificate}}}
+      \resumeItemListStart
+        \resumeItem{Completed a 3-week program on sustainability, responsible AI and green finance, applying data-driven insights to business challenges in workshops with CIB partners.}
+        \resumeItem{Achieved top performance on CIBOAT assessments and a \textbf{perfect score} on the final certification exam.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Data Analysis Instructor}{Oct 2024 -- Apr 2025}
+      {Google Developer Groups (GDG) on Campus}{}
+      \resumeItemListStart
+        \resumeItem{Taught Python and data visualization workshops to \textbf{10+ students}, including live-coding sessions on real data challenges.}
+        \resumeItem{Coached participants on KPI reporting and stakeholder-focused dashboard design.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------CERTIFICATIONS-----------
+\section{Certifications \& Achievements}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Certificates}{: \href{https://drive.google.com/file/d/1U0_dg8F3SlnHQzE1fxgUkn2GIDmLbTXS/view?usp=sharing}{\underline{Google Data Analytics Professional}} $|$
+        \href{https://drive.google.com/file/d/1vZ9XkmlFC-ZVMtdyJ6gZLSGq-moJ_AAo/view?usp=drive_link}{\underline{McKinsey Forward Program}} $|$
+        \href{https://www.credly.com/badges/1bc173f1-897d-432e-a187-d370e1f4a50c/public_url}{\underline{SAS Responsible AI}} $|$
+        \href{https://drive.google.com/file/d/1YESVkvw9zLRs-MK2OC6l9Z-LDeAQQ3Zs/view?usp=sharing}{\underline{Business English}}} \\
+     \textbf{SQL Practice}{: Solved 200+ advanced problems on SQLZoo and DataLemur (self-joins, window functions, subqueries)}
+    }}
+ \end{itemize}
+
+\end{document}

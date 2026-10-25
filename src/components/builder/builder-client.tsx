@@ -8,10 +8,12 @@ import { BuilderPreview } from "./builder-preview";
 import { updateResumeAction } from "@/lib/actions/resumes.actions";
 import type { Resume, ResumeDraft, ResumeDraftSection } from "@/lib/types/resume";
 import type { VaultItem } from "@/lib/types/vault";
+import type { Profile } from "@/lib/types/profile";
 
 type BuilderClientProps = {
   resume: Resume;
   allVaultItems: VaultItem[];
+  profile?: Profile;
 };
 
 function moveItem<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
@@ -22,7 +24,7 @@ function moveItem<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
   return next;
 }
 
-export function BuilderClient({ resume, allVaultItems }: BuilderClientProps) {
+export function BuilderClient({ resume, allVaultItems, profile }: BuilderClientProps) {
   const [draft, setDraft] = React.useState<ResumeDraft>(() => resume.draft);
   const [isSaving, setIsSaving] = React.useState(false);
   const saveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,53 +66,73 @@ export function BuilderClient({ resume, allVaultItems }: BuilderClientProps) {
     }
   };
 
-  // Section mutation helpers
+  // Section-level mutators
   const updateSection = (
-    sectionIndex: number,
-    updater: (prev: ResumeDraftSection) => ResumeDraftSection
+    index: number,
+    updater: (sec: ResumeDraftSection) => ResumeDraftSection
   ) => {
     updateDraft((prev) => {
-      const sections = [...prev.sections];
-      sections[sectionIndex] = updater(sections[sectionIndex]);
-      return { ...prev, sections };
+      const nextSections = [...prev.sections];
+      nextSections[index] = updater(nextSections[index]);
+      return { ...prev, sections: nextSections };
     });
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Top bar row: title field + saving indicator */}
-      <div className="flex items-center gap-3 px-4 py-2 border-b border-slate-100 bg-white">
-        <label className="text-xs font-medium text-slate-500 shrink-0">
-          Professional Title
-        </label>
-        <Input
-          key={resume.id}
-          className="max-w-xs h-7 text-sm"
-          defaultValue={draft.professionalTitle}
-          placeholder="e.g. Senior Software Engineer"
-          onBlur={handleTitleBlur}
-          onKeyDown={handleTitleKeyDown}
-        />
-        {isSaving ? (
-          <span className="flex items-center gap-1 text-xs text-indigo-500 animate-pulse">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            Saving…
-          </span>
-        ) : (
-          <span className="text-xs text-slate-400">Auto-saved</span>
-        )}
+    <div className="flex flex-col h-full bg-slate-50">
+      {/* Top action/status bar inside builder */}
+      <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center gap-2">
+          <Sliders className="h-3.5 w-3.5 text-slate-400" />
+          <span>Resume Configuration</span>
+        </div>
+        <div>
+          {isSaving ? (
+            <span className="flex items-center gap-1.5 text-indigo-600 font-medium">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Saving…
+            </span>
+          ) : (
+            <span className="text-slate-400">Auto-saved</span>
+          )}
+        </div>
       </div>
 
-      {/* Split panes */}
-      <div className="flex-1 flex overflow-hidden">
+      {/* Main split view */}
+      <div className="flex flex-1 overflow-hidden">
         {/* Left: Configuration pane */}
-        <div className="w-1/2 border-r border-slate-200 bg-white overflow-y-auto">
-          <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2 text-slate-700 font-semibold text-sm">
-            <Sliders className="h-4 w-4 text-indigo-600" />
-            Resume Configuration
+        <div className="w-1/2 border-r border-slate-200 bg-white overflow-y-auto p-6 space-y-6">
+          {/* Professional Target Title */}
+          <div className="space-y-1.5 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+            <label
+              htmlFor="target-title-input"
+              className="text-xs font-semibold uppercase tracking-wider text-slate-600"
+            >
+              Target Professional Title
+            </label>
+            <p className="text-xs text-slate-500">
+              Customize the subtitle heading for this resume variant without touching your Vault.
+            </p>
+            <Input
+              id="target-title-input"
+              defaultValue={draft.professionalTitle}
+              key={draft.professionalTitle}
+              placeholder="e.g. Senior Data Analyst / Power BI Specialist"
+              onBlur={handleTitleBlur}
+              onKeyDown={handleTitleKeyDown}
+              className="mt-1 bg-white"
+            />
           </div>
 
-          <div className="px-4 py-4 space-y-3">
+          {/* Sections list */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Sections & Content ({draft.sections.length})
+              </h3>
+              <span className="text-xs text-slate-400">Reorder with ▲ ▼</span>
+            </div>
+
             {draft.sections.map((section, sectionIndex) => (
               <SectionRow
                 key={section.id}
@@ -131,10 +153,16 @@ export function BuilderClient({ resume, allVaultItems }: BuilderClientProps) {
                   }))
                 }
                 onToggleVisible={() =>
-                  updateSection(sectionIndex, (s) => ({ ...s, visible: !s.visible }))
+                  updateSection(sectionIndex, (s) => ({
+                    ...s,
+                    visible: !s.visible,
+                  }))
                 }
-                onRename={(newName) =>
-                  updateSection(sectionIndex, (s) => ({ ...s, displayName: newName }))
+                onRename={(newDisplayName) =>
+                  updateSection(sectionIndex, (s) => ({
+                    ...s,
+                    displayName: newDisplayName,
+                  }))
                 }
                 onItemMoveUp={(itemIndex) =>
                   updateSection(sectionIndex, (s) => ({
@@ -180,15 +208,16 @@ export function BuilderClient({ resume, allVaultItems }: BuilderClientProps) {
 
         {/* Right: Preview pane */}
         <div className="w-1/2 bg-slate-100 overflow-y-auto">
-          <div className="px-4 py-3 border-b border-slate-200 bg-white flex items-center gap-2 text-slate-700 font-semibold text-sm">
+          <div className="px-4 py-3 border-b border-slate-200 bg-white flex items-center gap-2 text-slate-700 font-semibold text-sm sticky top-0 z-10 shadow-xs">
             <Eye className="h-4 w-4 text-indigo-600" />
-            Preview
+            Live Preview (ATS Classic v1)
           </div>
           <div className="p-8 flex justify-center">
             <BuilderPreview
               resume={resume}
               draft={draft}
               allVaultItems={allVaultItems}
+              profile={profile}
             />
           </div>
         </div>

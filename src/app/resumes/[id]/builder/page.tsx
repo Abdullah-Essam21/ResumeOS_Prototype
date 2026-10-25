@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { resumesRepository } from "@/lib/db/repositories/resumes.repository";
 import { vaultRepository } from "@/lib/db/repositories/vault.repository";
+import { profileRepository } from "@/lib/db/repositories/profile.repository";
 import { BuilderClient } from "@/components/builder/builder-client";
 
 type BuilderPageProps = {
@@ -22,6 +23,12 @@ export default async function ResumeBuilderPage({ params }: BuilderPageProps) {
   }
 
   const vaultItems = vaultRepository.getVaultItems({ includeArchived: false });
+  let profile;
+  try {
+    profile = profileRepository.getProfile();
+  } catch {
+    profile = undefined;
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -78,7 +85,7 @@ export default async function ResumeBuilderPage({ params }: BuilderPageProps) {
 
       {/* Builder interactive split layout */}
       <div className="flex-1 overflow-hidden">
-        <BuilderClient resume={resume} allVaultItems={vaultItems} />
+        <BuilderClient resume={resume} allVaultItems={vaultItems} profile={profile} />
       </div>
     </div>
   );

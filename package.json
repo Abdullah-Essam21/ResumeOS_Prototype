@@ -8,28 +8,28 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx src/scripts/seed.ts",
-    "test": "tsx src/tests/db.test.ts && tsx src/tests/phase3.test.ts && tsx src/tests/phase4.test.ts && tsx src/tests/phase5.test.ts && tsx src/tests/phase6.test.ts"
+    "test": "tsx src/tests/db.test.ts && tsx src/tests/phase3.test.ts && tsx src/tests/phase4.test.ts && tsx src/tests/phase5.test.ts && tsx src/tests/phase6.test.ts && tsx src/tests/template.test.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "clsx": "^2.1.1",
     "lucide-react": "^1.48.0",
     "next": "16.3.6",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "tailwind-merge": "^3.7.0",
-    "zod": "^4.6.5"
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.5.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^9.6.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
-    "tsx": "^4.23.15",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
