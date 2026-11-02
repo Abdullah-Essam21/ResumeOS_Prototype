@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { FileText, Database, LayoutDashboard, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { ProfileButton } from "./profile-button";
 
 export function Navbar() {
@@ -62,10 +61,6 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <ProfileButton />
-          <Badge variant="success" className="gap-1 font-mono text-[11px] hidden sm:inline-flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Local-First
-          </Badge>
         </div>
       </div>
     </header>
