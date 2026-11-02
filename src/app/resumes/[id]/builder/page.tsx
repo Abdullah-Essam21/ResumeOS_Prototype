@@ -7,6 +7,7 @@ import { resumesRepository } from "@/lib/db/repositories/resumes.repository";
 import { vaultRepository } from "@/lib/db/repositories/vault.repository";
 import { profileRepository } from "@/lib/db/repositories/profile.repository";
 import { BuilderClient } from "@/components/builder/builder-client";
+import { SaveVersionButton } from "@/components/builder/save-version-button";
 
 type BuilderPageProps = {
   params: Promise<{ id: string }>;
@@ -79,7 +80,7 @@ export default async function ResumeBuilderPage({ params }: BuilderPageProps) {
               Print / Export
             </Button>
           </Link>
-          <Button size="sm">Save Version</Button>
+          <SaveVersionButton resumeId={id} />
         </div>
       </div>
 
