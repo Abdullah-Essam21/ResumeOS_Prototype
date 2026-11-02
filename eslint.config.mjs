@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Electron compiled output — TypeScript source is the authoritative version
+    "dist-electron/**",
+    // Electron packager output
+    "dist-electron-app/**",
+    // Node.js CJS helper scripts — use require() intentionally
+    "scripts/**",
   ]),
 ]);
 

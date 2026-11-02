@@ -38,10 +38,6 @@ export function createDatabaseConnection(dbPath: string = getDatabasePath()): Da
 }
 
 export function getDb(): Database.Database {
-  if (process.env.NODE_ENV === "production") {
-    return createDatabaseConnection();
-  }
-
   if (!globalForDb.__resumeos_db) {
     globalForDb.__resumeos_db = createDatabaseConnection();
   }

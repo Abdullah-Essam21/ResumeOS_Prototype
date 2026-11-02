@@ -1,0 +1,81 @@
+appId: com.resumeos.desktop
+productName: ResumeOS
+copyright: Copyright © 2026 ResumeOS
+
+# Electron main process compiled entry point
+main: dist-electron/main.js
+
+# ─── Files to include in the package ──────────────────────────────────────────
+files:
+  # Compiled Electron main process
+  - dist-electron/**/*
+  # Next.js standalone server bundle (unpacked — see asarUnpack below)
+  - .next/standalone/**/*
+  # Static assets staged by copy-assets.js (already inside standalone)
+  # Public directory staged by copy-assets.js (already inside standalone)
+  # Do NOT include node_modules (standalone has its own minimal set)
+  - "!node_modules/**/*"
+  - "!src/**/*"
+  - "!electron/**/*"
+  - "!scripts/**/*"
+  - "!data/**/*"
+
+# ─── ASAR unpacking ───────────────────────────────────────────────────────────
+# Items in asarUnpack are copied outside of app.asar into app.asar.unpacked/
+# so that disk-reading code (Next.js standalone, better-sqlite3 native module)
+# can access them normally via the filesystem.
+asarUnpack:
+  - ".next/standalone/**/*"
+  - "node_modules/better-sqlite3/**/*"
+  - "node_modules/.pnpm/better-sqlite3*/**/*"
+
+# ─── Directories ─────────────────────────────────────────────────────────────
+directories:
+  buildResources: build
+  output: dist-electron-app
+
+# ─── Windows ─────────────────────────────────────────────────────────────────
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.productivity
+  icon: build/icon.icns
+
+dmg:
+  contents:
+    - x: 410
+      y: 150
+      type: link
+      path: /Applications
+    - x: 130
+      y: 150
+      type: file
+
+# ─── Linux ───────────────────────────────────────────────────────────────────
+linux:
+  target:
+    - AppImage
+  icon: build/icon.png
+
+# ─── Rebuild native addons against Electron's ABI ────────────────────────────
+# electron-builder runs `electron-rebuild` automatically when this is set.
+# This ensures better-sqlite3 is compiled for Electron's embedded Node ABI,
+# preventing NODE_MODULE_VERSION mismatches at runtime.
+npmRebuild: true

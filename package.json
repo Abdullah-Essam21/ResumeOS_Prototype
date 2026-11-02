@@ -2,13 +2,19 @@
   "name": "resume-os",
   "version": "0.1.0",
   "private": true,
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx src/scripts/seed.ts",
-    "test": "tsx src/tests/db.test.ts && tsx src/tests/phase3.test.ts && tsx src/tests/phase4.test.ts && tsx src/tests/phase5.test.ts && tsx src/tests/phase6.test.ts && tsx src/tests/phase7.test.ts && tsx src/tests/phase10.test.ts && tsx src/tests/phase12.test.ts && tsx src/tests/template.test.ts"
+    "test": "tsx src/tests/db.test.ts && tsx src/tests/phase3.test.ts && tsx src/tests/phase4.test.ts && tsx src/tests/phase5.test.ts && tsx src/tests/phase6.test.ts && tsx src/tests/phase7.test.ts && tsx src/tests/phase10.test.ts && tsx src/tests/phase12.test.ts && tsx src/tests/template.test.ts",
+    "electron:compile": "tsc --project tsconfig.electron.json",
+    "electron:dev": "npm run electron:compile && electron .",
+    "electron:build": "npm run build && node scripts/copy-assets.js && npm run electron:compile && electron-builder --config electron-builder.yml",
+    "package:win": "npm run electron:build -- --win",
+    "package:mac": "npm run electron:build -- --mac"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
@@ -26,9 +32,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
+    "tree-kill": "^1.2.2",
     "tsx": "^4.21.0",
     "typescript": "^5"
   }

@@ -47,3 +47,9 @@ data/
 *.db-wal
 *.db-shm
 
+
+# electron compiled main process output
+/dist-electron/
+
+# electron-builder packaged app output
+/dist-electron-app/
