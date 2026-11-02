@@ -5,7 +5,8 @@ import { ChevronUp, ChevronDown, Eye, EyeOff, Plus, Edit2, Check } from "lucide-
 import { Button } from "@/components/ui/button";
 import { ItemRow } from "./item-row";
 import { VaultPicker } from "./vault-picker";
-import type { ResumeDraftSection } from "@/lib/types/resume";
+import { ItemOverrideModal } from "./item-override-modal";
+import type { ResumeDraftSection, ResumeItemOverrides } from "@/lib/types/resume";
 import type { VaultItem } from "@/lib/types/vault";
 
 type SectionRowProps = {
@@ -21,6 +22,7 @@ type SectionRowProps = {
   onItemMoveDown: (itemIndex: number) => void;
   onItemToggleVisible: (itemIndex: number) => void;
   onItemRemove: (itemIndex: number) => void;
+  onItemUpdateOverrides: (itemIndex: number, overrides: ResumeItemOverrides) => void;
   onAddFromVault: (vaultItemId: string) => void;
 };
 
@@ -37,11 +39,13 @@ export function SectionRow({
   onItemMoveDown,
   onItemToggleVisible,
   onItemRemove,
+  onItemUpdateOverrides,
   onAddFromVault,
 }: SectionRowProps) {
   const [expanded, setExpanded] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
   const [pickerOpen, setPickerOpen] = React.useState(false);
+  const [overrideItemIndex, setOverrideItemIndex] = React.useState<number | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const commitRename = () => {
@@ -63,6 +67,11 @@ export function SectionRow({
     }
     return map;
   }, [allVaultItems]);
+
+  const activeOverrideItem =
+    overrideItemIndex !== null ? section.items[overrideItemIndex] : null;
+  const activeVaultItem =
+    activeOverrideItem ? vaultItemMap.get(activeOverrideItem.vaultItemId) : undefined;
 
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
@@ -99,53 +108,59 @@ export function SectionRow({
               }}
             />
           ) : (
-            <span className="text-sm font-semibold text-slate-800 truncate">
+            <span
+              onClick={() => setIsEditing(true)}
+              className="text-sm font-semibold text-slate-800 cursor-pointer hover:text-indigo-600 truncate"
+              title="Click to rename display title"
+            >
               {section.displayName}
             </span>
           )}
-          {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="p-1 text-slate-400 hover:text-slate-600 rounded opacity-0 group-hover:opacity-100 focus:opacity-100"
-              aria-label="Rename section"
-            >
-              <Edit2 className="h-3.5 w-3.5" />
-            </button>
-          ) : (
+
+          {isEditing ? (
             <button
               onClick={commitRename}
-              className="p-1 text-indigo-500 hover:text-indigo-700 rounded"
+              className="p-1 text-emerald-600 hover:text-emerald-700"
               aria-label="Confirm rename"
             >
               <Check className="h-3.5 w-3.5" />
             </button>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1 text-slate-400 hover:text-slate-600 opacity-0 group-hover:opacity-100"
+              aria-label="Rename section"
+            >
+              <Edit2 className="h-3 w-3" />
+            </button>
           )}
-          <span className="text-xs text-slate-400 ml-1">
+
+          <span className="text-[11px] text-slate-400 shrink-0 ml-1">
             ({section.items.length})
           </span>
         </div>
 
-        {/* Section controls */}
-        <div className="flex items-center gap-0.5 shrink-0">
+        {/* Controls */}
+        <div className="flex items-center gap-0.5">
           <button
             onClick={onMoveUp}
             disabled={sectionIndex === 0}
-            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed rounded"
+            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="Move section up"
           >
-            <ChevronUp className="h-4 w-4" />
+            <ChevronUp className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onMoveDown}
             disabled={sectionIndex === totalSections - 1}
-            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed rounded"
+            className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed"
             aria-label="Move section down"
           >
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onToggleVisible}
-            className="p-1 text-slate-400 hover:text-slate-700 rounded"
+            className="p-1 text-slate-400 hover:text-slate-700 ml-1"
             aria-label={section.visible ? "Hide section" : "Show section"}
           >
             {section.visible ? (
@@ -176,6 +191,7 @@ export function SectionRow({
                 onMoveDown={() => onItemMoveDown(idx)}
                 onToggleVisible={() => onItemToggleVisible(idx)}
                 onRemove={() => onItemRemove(idx)}
+                onOpenOverrides={() => setOverrideItemIndex(idx)}
               />
             ))
           )}
@@ -207,6 +223,20 @@ export function SectionRow({
           setPickerOpen(false);
         }}
       />
+
+      {/* Item Override Modal */}
+      {overrideItemIndex !== null && activeOverrideItem && (
+        <ItemOverrideModal
+          open={true}
+          onClose={() => setOverrideItemIndex(null)}
+          vaultItem={activeVaultItem}
+          sectionType={section.type}
+          currentOverrides={activeOverrideItem.overrides ?? {}}
+          onSaveOverrides={(newOverrides) => {
+            onItemUpdateOverrides(overrideItemIndex, newOverrides);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -192,6 +192,16 @@ export function BuilderClient({ resume, allVaultItems, profile }: BuilderClientP
                     items: s.items.filter((_, i) => i !== itemIndex),
                   }))
                 }
+                onItemUpdateOverrides={(itemIndex, overrides) =>
+                  updateSection(sectionIndex, (s) => {
+                    const items = [...s.items];
+                    items[itemIndex] = {
+                      ...items[itemIndex],
+                      overrides,
+                    };
+                    return { ...s, items };
+                  })
+                }
                 onAddFromVault={(vaultItemId) =>
                   updateSection(sectionIndex, (s) => ({
                     ...s,
