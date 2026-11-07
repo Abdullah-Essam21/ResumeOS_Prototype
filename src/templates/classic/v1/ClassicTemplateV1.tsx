@@ -222,8 +222,7 @@ function TagsEntry({ item }: { item: ResolvedResumeItem }) {
 }
 
 /**
- * Renders a record entry (Certifications, Achievements, or Simple Records)
- * matching \section{Certifications & Achievements} in LaTeX.
+ * Renders a single standard stacked record entry.
  */
 function RecordEntry({ item }: { item: ResolvedResumeItem }) {
   const c = item.resolvedContent;
@@ -257,6 +256,176 @@ function RecordEntry({ item }: { item: ResolvedResumeItem }) {
       {date && (
         <span className="text-black font-normal shrink-0 ml-2">{date}</span>
       )}
+    </div>
+  );
+}
+
+/**
+ * Renders a records section according to displayMode:
+ * - "inline": Group credentials horizontally with | (exact Jake's Resume style)
+ * - "grid": 2-column balanced parallel grid
+ * - "stacked": Full-width stacked list
+ */
+function RecordsSectionContent({
+  items,
+  displayMode = "stacked",
+  sectionDisplayName,
+}: {
+  items: ResolvedResumeItem[];
+  displayMode?: "stacked" | "inline" | "grid";
+  sectionDisplayName: string;
+}) {
+  if (displayMode === "inline") {
+    // Separate credentials without multi-word body description from descriptive records
+    const credentials = items.filter((i) => !i.resolvedContent.description);
+    const descriptive = items.filter((i) => !!i.resolvedContent.description);
+
+    const prefixLabel = sectionDisplayName.toLowerCase().includes("certificate")
+      ? "Certificates"
+      : sectionDisplayName.toLowerCase().includes("achievement")
+      ? "Achievements"
+      : "Credentials";
+
+    return (
+      <div className="space-y-1 text-[11px] text-black leading-snug">
+        {credentials.length > 0 && (
+          <div>
+            <span className="font-bold">{prefixLabel}</span>
+            <span className="mr-1">:</span>
+            {credentials.map((item, idx) => {
+              const c = item.resolvedContent;
+              const title = String(c.title || "");
+              const link = String(c.link || "");
+              const issuer = String(c.issuer || "");
+              return (
+                <React.Fragment key={item.vaultItemId}>
+                  {idx > 0 && <span className="mx-1.5 text-black font-normal">|</span>}
+                  {link ? (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:opacity-80"
+                    >
+                      {title}
+                    </a>
+                  ) : (
+                    <span>{title}</span>
+                  )}
+                  {issuer && <span className="text-black font-normal ml-0.5">({issuer})</span>}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        )}
+
+        {descriptive.map((item) => {
+          const c = item.resolvedContent;
+          const title = String(c.title || "");
+          const desc = String(c.description || "");
+          const link = String(c.link || "");
+          return (
+            <div key={item.vaultItemId}>
+              {link ? (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline underline-offset-2 hover:opacity-80"
+                >
+                  {title}
+                </a>
+              ) : (
+                <span className="font-bold">{title}</span>
+              )}
+              {desc && (
+                <>
+                  <span className="mr-1">:</span>
+                  <span>{desc}</span>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (displayMode === "grid") {
+    const credentials = items.filter((i) => !i.resolvedContent.description);
+    const descriptive = items.filter((i) => !!i.resolvedContent.description);
+
+    return (
+      <div className="space-y-1 text-[11px] text-black leading-snug">
+        {credentials.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
+            {credentials.map((item) => {
+              const c = item.resolvedContent;
+              const title = String(c.title || "");
+              const link = String(c.link || "");
+              const issuer = String(c.issuer || "");
+              return (
+                <div key={item.vaultItemId} className="flex items-baseline truncate">
+                  <span className="mr-1.5 text-black">•</span>
+                  {link ? (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:opacity-80 truncate"
+                    >
+                      {title}
+                    </a>
+                  ) : (
+                    <span className="truncate">{title}</span>
+                  )}
+                  {issuer && (
+                    <span className="text-black font-normal ml-1 shrink-0">({issuer})</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {descriptive.map((item) => {
+          const c = item.resolvedContent;
+          const title = String(c.title || "");
+          const desc = String(c.description || "");
+          const link = String(c.link || "");
+          return (
+            <div key={item.vaultItemId} className="pt-0.5">
+              {link ? (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline underline-offset-2 hover:opacity-80"
+                >
+                  {title}
+                </a>
+              ) : (
+                <span className="font-bold">{title}</span>
+              )}
+              {desc && (
+                <>
+                  <span className="mr-1">:</span>
+                  <span>{desc}</span>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Default: stacked full-width list
+  return (
+    <div className="space-y-0.5">
+      {items.map((item) => (
+        <RecordEntry key={item.vaultItemId} item={item} />
+      ))}
     </div>
   );
 }
@@ -304,11 +473,11 @@ function SectionContent({ section }: { section: ResolvedResumeSection }) {
   // If records layout (Certifications, achievements)
   if (visibleItems.every((i) => i.layout === "record")) {
     return (
-      <div className="space-y-0.5">
-        {visibleItems.map((item) => (
-          <RecordEntry key={item.vaultItemId} item={item} />
-        ))}
-      </div>
+      <RecordsSectionContent
+        items={visibleItems}
+        displayMode={section.displayMode}
+        sectionDisplayName={section.displayName}
+      />
     );
   }
 
@@ -335,6 +504,7 @@ function SectionContent({ section }: { section: ResolvedResumeSection }) {
  * - Two-tier subheadings with left title/org and right date/location
  * - Tight, compact bullet list with bold inline highlights
  * - Project and Experience titles with links render without underlines
+ * - Customizable record displayMode (inline, grid, stacked)
  */
 export function ClassicTemplateV1({
   snapshot,

@@ -70,6 +70,7 @@ export function resolveResumeSnapshot(
       type: section.type,
       displayName: section.displayName,
       visible: section.visible,
+      displayMode: section.displayMode ?? "stacked",
       items: resolvedItems,
     };
   });

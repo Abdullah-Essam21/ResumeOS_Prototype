@@ -137,6 +137,7 @@ async function runTemplateTests() {
   skillSec.items.push({ vaultItemId: skillItem.id, visible: true, overrides: {} });
 
   const certSec = draft.sections.find((s) => s.type === "certifications")!;
+  certSec.displayMode = "inline";
   certSec.items.push({ vaultItemId: certItem.id, visible: true, overrides: {} });
 
   const resume = resumesRepo.createResume({
@@ -158,7 +159,6 @@ async function runTemplateTests() {
   console.log("Test 4: Verify item-level override is reflected in snapshot");
   const resolvedExpSec = snapshot.sections.find((s) => s.type === "experience")!;
   assert.equal(resolvedExpSec.items.length, 1);
-  // Original was "Power BI Specialist Intern", override is "Senior Power BI Specialist Intern"
   assert.equal(resolvedExpSec.items[0].content.title, "Power BI Specialist Intern");
   assert.equal(resolvedExpSec.items[0].resolvedContent.title, "Senior Power BI Specialist Intern");
   assert.equal(resolvedExpSec.items[0].resolvedContent.link, "https://depi-alumni.gov.eg");
@@ -178,6 +178,11 @@ async function runTemplateTests() {
   const resolvedSkillSec = snapshot.sections.find((s) => s.type === "skills")!;
   assert.equal(resolvedSkillSec.items[0].layout, "tags");
   assert.equal(resolvedSkillSec.items[0].resolvedContent.category, "BI & Visualization");
+
+  // 8. Test section record display modes
+  console.log("Test 7: Verify section displayMode resolution (inline, grid, stacked)");
+  const resolvedCertSec = snapshot.sections.find((s) => s.type === "certifications")!;
+  assert.equal(resolvedCertSec.displayMode, "inline");
 
   console.log("✓ All ClassicTemplateV1 & Snapshot Resolution tests passed successfully!");
 }

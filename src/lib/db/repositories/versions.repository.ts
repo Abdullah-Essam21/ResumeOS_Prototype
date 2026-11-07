@@ -154,6 +154,7 @@ export class VersionsRepository {
         type: section.type,
         displayName: section.displayName,
         visible: section.visible,
+        displayMode: section.displayMode ?? "stacked",
         items: section.items.map((item) => ({
           vaultItemId: item.vaultItemId,
           visible: true,

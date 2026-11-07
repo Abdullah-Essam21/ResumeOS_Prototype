@@ -164,6 +164,12 @@ export function BuilderClient({ resume, allVaultItems, profile }: BuilderClientP
                     displayName: newDisplayName,
                   }))
                 }
+                onUpdateDisplayMode={(mode) =>
+                  updateSection(sectionIndex, (s) => ({
+                    ...s,
+                    displayMode: mode,
+                  }))
+                }
                 onItemMoveUp={(itemIndex) =>
                   updateSection(sectionIndex, (s) => ({
                     ...s,

@@ -26,11 +26,15 @@ export const ResumeDraftItemSchema = z.object({
 
 export type ResumeDraftItem = z.infer<typeof ResumeDraftItemSchema>;
 
+export const SectionDisplayModeSchema = z.enum(["stacked", "inline", "grid"]);
+export type SectionDisplayMode = z.infer<typeof SectionDisplayModeSchema>;
+
 export const ResumeDraftSectionSchema = z.object({
   id: z.string(),
   type: z.string(), // semantic type e.g. "experience", "projects", "skills"
   displayName: z.string(), // user-customizable display name
   visible: z.boolean().default(true),
+  displayMode: SectionDisplayModeSchema.optional().default("stacked"),
   items: z.array(ResumeDraftItemSchema).default([]),
 });
 
@@ -52,6 +56,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "experience",
         displayName: "Work Experience",
         visible: true,
+        displayMode: "stacked",
         items: [],
       },
       {
@@ -59,6 +64,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "projects",
         displayName: "Key Projects",
         visible: true,
+        displayMode: "stacked",
         items: [],
       },
       {
@@ -66,6 +72,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "education",
         displayName: "Education",
         visible: true,
+        displayMode: "stacked",
         items: [],
       },
       {
@@ -73,6 +80,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "skills",
         displayName: "Technical Skills",
         visible: true,
+        displayMode: "stacked",
         items: [],
       },
       {
@@ -80,6 +88,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "certifications",
         displayName: "Certifications",
         visible: true,
+        displayMode: "inline",
         items: [],
       },
       {
@@ -87,6 +96,7 @@ export function getDefaultResumeDraft(professionalTitle: string = ""): ResumeDra
         type: "achievements",
         displayName: "Achievements & Honors",
         visible: true,
+        displayMode: "inline",
         items: [],
       },
     ],
@@ -131,6 +141,7 @@ export const ResolvedResumeSectionSchema = z.object({
   type: z.string(),
   displayName: z.string(),
   visible: z.boolean(),
+  displayMode: SectionDisplayModeSchema.optional().default("stacked"),
   items: z.array(ResolvedResumeItemSchema),
 });
 

@@ -165,6 +165,7 @@ async function runTests() {
         type: "experience",
         displayName: "Work Experience",
         visible: true,
+        displayMode: "stacked",
         items: [
           {
             vaultItemId: expItem.id,

@@ -301,6 +301,7 @@ export function seedDatabase(database: Database.Database = getDb()): void {
           type: "education",
           displayName: "Education",
           visible: true,
+          displayMode: "stacked",
           items: [{ vaultItemId: eduModern.id, visible: true, overrides: {} }],
         },
         {
@@ -308,6 +309,7 @@ export function seedDatabase(database: Database.Database = getDb()): void {
           type: "skills",
           displayName: "Technical Skills",
           visible: true,
+          displayMode: "stacked",
           items: [
             { vaultItemId: skillBi.id, visible: true, overrides: {} },
             { vaultItemId: skillDe.id, visible: true, overrides: {} },
@@ -320,6 +322,7 @@ export function seedDatabase(database: Database.Database = getDb()): void {
           type: "projects",
           displayName: "Projects",
           visible: true,
+          displayMode: "stacked",
           items: [
             { vaultItemId: projNews.id, visible: true, overrides: {} },
             { vaultItemId: projThanawya.id, visible: true, overrides: {} },
@@ -331,6 +334,7 @@ export function seedDatabase(database: Database.Database = getDb()): void {
           type: "experience",
           displayName: "Experience",
           visible: true,
+          displayMode: "stacked",
           items: [
             { vaultItemId: expDepi.id, visible: true, overrides: {} },
             { vaultItemId: expCib.id, visible: true, overrides: {} },
@@ -342,6 +346,7 @@ export function seedDatabase(database: Database.Database = getDb()): void {
           type: "certifications",
           displayName: "Certifications & Achievements",
           visible: true,
+          displayMode: "inline",
           items: [
             { vaultItemId: certGoogle.id, visible: true, overrides: {} },
             { vaultItemId: certMckinsey.id, visible: true, overrides: {} },

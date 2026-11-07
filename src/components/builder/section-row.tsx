@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ItemRow } from "./item-row";
 import { VaultPicker } from "./vault-picker";
 import { ItemOverrideModal } from "./item-override-modal";
-import type { ResumeDraftSection, ResumeItemOverrides } from "@/lib/types/resume";
+import type { ResumeDraftSection, ResumeItemOverrides, SectionDisplayMode } from "@/lib/types/resume";
 import type { VaultItem } from "@/lib/types/vault";
 
 type SectionRowProps = {
@@ -18,6 +18,7 @@ type SectionRowProps = {
   onMoveDown: () => void;
   onToggleVisible: () => void;
   onRename: (newName: string) => void;
+  onUpdateDisplayMode?: (mode: SectionDisplayMode) => void;
   onItemMoveUp: (itemIndex: number) => void;
   onItemMoveDown: (itemIndex: number) => void;
   onItemToggleVisible: (itemIndex: number) => void;
@@ -35,6 +36,7 @@ export function SectionRow({
   onMoveDown,
   onToggleVisible,
   onRename,
+  onUpdateDisplayMode,
   onItemMoveUp,
   onItemMoveDown,
   onItemToggleVisible,
@@ -67,6 +69,11 @@ export function SectionRow({
     }
     return map;
   }, [allVaultItems]);
+
+  const isRecordSection =
+    section.type === "certifications" ||
+    section.type === "achievements" ||
+    section.items.some((i) => vaultItemMap.get(i.vaultItemId)?.layout === "record");
 
   const activeOverrideItem =
     overrideItemIndex !== null ? section.items[overrideItemIndex] : null;
@@ -174,7 +181,41 @@ export function SectionRow({
 
       {/* Expanded items */}
       {expanded ? (
-        <div className="px-2 py-2 bg-white border-t border-slate-100 space-y-0.5">
+        <div className="px-2 py-2 bg-white border-t border-slate-100 space-y-1">
+          {/* Record Display Mode Selector */}
+          {isRecordSection && onUpdateDisplayMode && (
+            <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded px-2.5 py-1.5 mb-1.5">
+              <span className="text-[11px] font-medium text-slate-600">
+                Display Style:
+              </span>
+              <div className="flex items-center gap-1">
+                {[
+                  { value: "inline", label: "Inline Flow", desc: "Compact pipe-separated (LaTeX style)" },
+                  { value: "grid", label: "2-Column Grid", desc: "Balanced parallel columns" },
+                  { value: "stacked", label: "Stacked List", desc: "Full-width traditional rows" },
+                ].map((m) => {
+                  const currentMode = section.displayMode || "stacked";
+                  const isActive = currentMode === m.value;
+                  return (
+                    <button
+                      key={m.value}
+                      type="button"
+                      onClick={() => onUpdateDisplayMode(m.value as SectionDisplayMode)}
+                      className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                        isActive
+                          ? "bg-indigo-600 text-white shadow-xs"
+                          : "text-slate-600 hover:bg-slate-200"
+                      }`}
+                      title={m.desc}
+                    >
+                      {m.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {section.items.length === 0 ? (
             <p className="text-xs text-slate-400 text-center py-3">
               No items — add from Vault below.
