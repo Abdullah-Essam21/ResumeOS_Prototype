@@ -210,10 +210,10 @@ function OverrideForm({
     if (overrideLinkLabel.trim() && overrideLinkLabel.trim() !== originalLinkLabel) {
       newOverrides.linkLabel = overrideLinkLabel.trim();
     }
-    if (overrideIssuer.trim() && overrideIssuer.trim() !== originalIssuer) {
+    if (overrideIssuer.trim() !== originalIssuer) {
       (newOverrides as Record<string, unknown>).issuer = overrideIssuer.trim();
     }
-    if (overrideDate.trim() && overrideDate.trim() !== originalDate) {
+    if (overrideDate.trim() !== originalDate) {
       (newOverrides as Record<string, unknown>).date = overrideDate.trim();
     }
     if (overrideDescription.trim() && overrideDescription.trim() !== originalDescription) {

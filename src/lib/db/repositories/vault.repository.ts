@@ -9,6 +9,9 @@ import {
   CreateVaultItemSchema,
   UpdateVaultItemInput,
   UpdateVaultItemSchema,
+  TimelineContentSchema,
+  RecordContentSchema,
+  TagsContentSchema,
 } from "@/lib/types/vault";
 
 interface VaultItemRow {
@@ -126,9 +129,20 @@ export class VaultRepository {
     const updatedCategory = validated.category ?? existing.category;
     const updatedLayout = validated.layout ?? existing.layout;
     const updatedDisplayOrder = validated.displayOrder ?? existing.displayOrder;
-    const mergedContent = validated.content
-      ? { ...(existing.content as Record<string, unknown>), ...(validated.content as Record<string, unknown>) }
-      : existing.content;
+
+    let mergedContent = existing.content as Record<string, unknown>;
+    if (validated.content) {
+      const candidate = { ...mergedContent, ...validated.content };
+      if (updatedLayout === "timeline") {
+        mergedContent = TimelineContentSchema.parse(candidate);
+      } else if (updatedLayout === "record") {
+        mergedContent = RecordContentSchema.parse(candidate);
+      } else if (updatedLayout === "tags") {
+        mergedContent = TagsContentSchema.parse(candidate);
+      } else {
+        mergedContent = candidate;
+      }
+    }
     const updatedContent = JSON.stringify(mergedContent);
 
     this.db

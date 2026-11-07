@@ -104,6 +104,17 @@ async function runPhase3Tests() {
   assert.equal(updatedExpContent.title, "BI Specialist Intern");
   assert.equal(updatedExpContent.organization, "CIB", "Existing organization should be preserved on partial update");
 
+  // Record layout update (specifically leaving issuer blank)
+  const updatedCert = vaultRepo.updateVaultItem(cert.id, {
+    content: {
+      issuer: "",
+    },
+  });
+  assert.ok(updatedCert);
+  const updatedCertContent = updatedCert.content as { title: string; issuer: string };
+  assert.equal(updatedCertContent.title, "Google Data Analytics", "Existing title should be preserved");
+  assert.equal(updatedCertContent.issuer, "", "Issuer should be updated to blank string");
+
   // 4. Archive, unarchive, and filter
   console.log("Test 4: Soft archival and filtering");
   assert.equal(vaultRepo.getVaultItems().length, 3);

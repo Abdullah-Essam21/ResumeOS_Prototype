@@ -90,13 +90,7 @@ export const UpdateVaultItemSchema = z.object({
   category: VaultCategorySchema.optional(),
   layout: VaultLayoutSchema.optional(),
   displayOrder: z.number().int().optional(),
-  content: z
-    .union([
-      TimelineContentSchema.partial(),
-      RecordContentSchema.partial(),
-      TagsContentSchema.partial(),
-    ])
-    .optional(),
+  content: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type UpdateVaultItemInput = z.input<typeof UpdateVaultItemSchema>;
