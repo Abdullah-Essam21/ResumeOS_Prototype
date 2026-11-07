@@ -23,6 +23,7 @@ export const TimelineContentSchema = z.object({
   endDate: z.string().optional().default(""),
   location: z.string().optional().default(""),
   link: z.string().optional().default(""),
+  linkLabel: z.string().optional().default(""),
   bullets: z.array(z.string()).default([]),
 });
 
@@ -33,6 +34,7 @@ export const RecordContentSchema = z.object({
   issuer: z.string().optional().default(""),
   date: z.string().optional().default(""),
   link: z.string().url().optional().or(z.literal("")),
+  linkLabel: z.string().optional().default(""),
   description: z.string().optional().default(""),
 });
 

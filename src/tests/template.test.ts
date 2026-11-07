@@ -73,6 +73,7 @@ async function runTemplateTests() {
       title: "Egyptian News Analytics Pipeline",
       organization: "Python, Airflow, Docker, Scrapy, PyArrow, BigQuery",
       link: "https://github.com/Abdullah-Essam21/news_pipline",
+      linkLabel: "GitHub Repo",
       bullets: [
         "Built a containerized Airflow pipeline that scrapes **2M+ articles** (2013–2026).",
         "Wrote adaptive parsing logic achieving **100% content capture**.",
@@ -97,6 +98,7 @@ async function runTemplateTests() {
       issuer: "Google",
       date: "2025",
       link: "https://drive.google.com/file/d/sample/view",
+      linkLabel: "View Credential",
       description: "Comprehensive data analytics specialization",
     },
   });
@@ -123,7 +125,13 @@ async function runTemplateTests() {
   });
 
   const projSec = draft.sections.find((s) => s.type === "projects")!;
-  projSec.items.push({ vaultItemId: projItem.id, visible: true, overrides: {} });
+  projSec.items.push({
+    vaultItemId: projItem.id,
+    visible: true,
+    overrides: {
+      linkLabel: "Live Dashboard", // Custom link title override for this resume!
+    },
+  });
 
   const skillSec = draft.sections.find((s) => s.type === "skills")!;
   skillSec.items.push({ vaultItemId: skillItem.id, visible: true, overrides: {} });
@@ -155,12 +163,13 @@ async function runTemplateTests() {
   assert.equal(resolvedExpSec.items[0].resolvedContent.title, "Senior Power BI Specialist Intern");
   assert.equal(resolvedExpSec.items[0].resolvedContent.link, "https://depi-alumni.gov.eg");
 
-  // 6. Test timeline item bullets & GitHub project link
-  console.log("Test 5: Verify project GitHub link, tech stack, and bullets");
+  // 6. Test timeline item bullets & custom project link title
+  console.log("Test 5: Verify project GitHub link, custom link label, tech stack, and bullets");
   const resolvedProjSec = snapshot.sections.find((s) => s.type === "projects")!;
   assert.equal(resolvedProjSec.items.length, 1);
   assert.equal(resolvedProjSec.items[0].resolvedContent.title, "Egyptian News Analytics Pipeline");
   assert.equal(resolvedProjSec.items[0].resolvedContent.link, "https://github.com/Abdullah-Essam21/news_pipline");
+  assert.equal(resolvedProjSec.items[0].resolvedContent.linkLabel, "Live Dashboard");
   const bullets = resolvedProjSec.items[0].resolvedContent.bullets as string[];
   assert.ok(bullets[0].includes("**2M+ articles**"));
 

@@ -150,12 +150,28 @@ export function VaultItemCard({
 }
 
 function TimelineView({ content }: { content: TimelineContent }) {
+  const linkLabel = content.linkLabel || (content.link && content.link.includes("github.com") ? "GitHub" : "Link");
+
   return (
     <div className="space-y-2">
       <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-        <h4 className="font-semibold text-slate-900 text-base leading-snug">
-          {content.title}
-        </h4>
+        <div className="flex items-center gap-2">
+          <h4 className="font-semibold text-slate-900 text-base leading-snug">
+            {content.title}
+          </h4>
+          {content.link && (
+            <a
+              href={content.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+              title="Open external link"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              <span>{linkLabel}</span>
+            </a>
+          )}
+        </div>
         {(content.startDate || content.endDate) && (
           <span className="flex items-center gap-1 text-xs text-slate-500 font-medium whitespace-nowrap">
             <Calendar className="h-3 w-3 text-slate-400" />
@@ -201,10 +217,11 @@ function RecordView({ content }: { content: RecordContent }) {
               href={content.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-800"
+              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
               title="Open external link"
             >
               <ExternalLink className="h-3.5 w-3.5" />
+              {content.linkLabel && <span>{content.linkLabel}</span>}
             </a>
           )}
         </div>

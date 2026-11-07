@@ -54,6 +54,7 @@ function TimelineEntry({
   const endDate = String(c.endDate || "");
   const location = String(c.location || "");
   const link = String(c.link || "");
+  const linkLabel = String(c.linkLabel || c.linkTitle || "Certificate");
   const bullets = Array.isArray(c.bullets) ? (c.bullets as string[]) : [];
 
   const isEducation = sectionType === "education";
@@ -110,7 +111,7 @@ function TimelineEntry({
                 rel="noopener noreferrer"
                 className="underline underline-offset-2 hover:opacity-80"
               >
-                {location || "Certificate"}
+                {location || linkLabel}
               </a>
             ) : (
               location
@@ -143,6 +144,9 @@ function ProjectEntry({ item }: { item: ResolvedResumeItem }) {
   const title = String(c.title || c.projectName || "");
   const techStack = String(c.organization || c.description || "");
   const link = String(c.link || "");
+  const linkLabel = String(
+    c.linkLabel || c.linkTitle || (link.includes("github.com") ? "GitHub" : "Link")
+  );
   const bullets = Array.isArray(c.bullets) ? (c.bullets as string[]) : [];
 
   return (
@@ -156,7 +160,7 @@ function ProjectEntry({ item }: { item: ResolvedResumeItem }) {
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold text-black no-underline hover:opacity-80 cursor-pointer"
-              title="View on GitHub"
+              title={linkLabel ? `View ${linkLabel}` : "Open link"}
             >
               {title}
             </a>
@@ -178,7 +182,7 @@ function ProjectEntry({ item }: { item: ResolvedResumeItem }) {
             rel="noopener noreferrer"
             className="text-[11px] text-black underline underline-offset-2 shrink-0 ml-2 hover:opacity-80"
           >
-            {link.includes("github.com") ? "GitHub" : "Link"}
+            {linkLabel}
           </a>
         )}
       </div>

@@ -103,6 +103,12 @@ function VaultItemInnerForm({
     }
     return "";
   });
+  const [timelineLinkLabel, setTimelineLinkLabel] = React.useState(() => {
+    if (editingItem && editingItem.layout === "timeline") {
+      return (editingItem.content as TimelineContent).linkLabel || "";
+    }
+    return "";
+  });
   const [timelineBullets, setTimelineBullets] = React.useState<string[]>(() => {
     if (editingItem && editingItem.layout === "timeline") {
       const bullets = (editingItem.content as TimelineContent).bullets;
@@ -133,6 +139,12 @@ function VaultItemInnerForm({
   const [recordLink, setRecordLink] = React.useState(() => {
     if (editingItem && editingItem.layout === "record") {
       return (editingItem.content as RecordContent).link || "";
+    }
+    return "";
+  });
+  const [recordLinkLabel, setRecordLinkLabel] = React.useState(() => {
+    if (editingItem && editingItem.layout === "record") {
+      return (editingItem.content as RecordContent).linkLabel || "";
     }
     return "";
   });
@@ -208,6 +220,7 @@ function VaultItemInnerForm({
         endDate: timelineEndDate.trim(),
         location: timelineLocation.trim(),
         link: timelineLink.trim(),
+        linkLabel: timelineLinkLabel.trim(),
         bullets: filteredBullets,
       };
     } else if (layout === "record") {
@@ -216,6 +229,7 @@ function VaultItemInnerForm({
         issuer: recordIssuer.trim(),
         date: recordDate.trim(),
         link: recordLink.trim(),
+        linkLabel: recordLinkLabel.trim(),
         description: recordDesc.trim(),
       };
     } else {
@@ -236,95 +250,153 @@ function VaultItemInnerForm({
           layout,
           content,
         });
-        if (!res.success) throw new Error(res.error);
+        if (!res.success) {
+          setErrorMsg(res.error || "Failed to update item.");
+          setIsSubmitting(false);
+          return;
+        }
       } else {
         const res = await createVaultItemAction({
           category,
           layout,
           content,
         });
-        if (!res.success) throw new Error(res.error);
+        if (!res.success) {
+          setErrorMsg(res.error || "Failed to create item.");
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       onSaved?.();
       onClose();
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : String(err));
+    } catch {
+      setErrorMsg("An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-4 max-h-[75vh] overflow-y-auto px-1">
+    <form onSubmit={handleSubmit} className="space-y-4 mt-2">
       {errorMsg && (
-        <div className="rounded-lg bg-red-50 p-3 text-xs text-red-600 border border-red-200">
+        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
           {errorMsg}
         </div>
       )}
 
-      {/* Category & Layout Selectors */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="category">Category *</Label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) =>
-              handleCategoryChange(e.target.value as VaultCategory)
-            }
-            className="flex h-9 w-full rounded-lg border border-slate-300 bg-white px-3 py-1 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-          >
-            {CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="layout">Layout Type *</Label>
-          <select
-            id="layout"
-            value={layout}
-            onChange={(e) => setLayout(e.target.value as VaultLayout)}
-            className="flex h-9 w-full rounded-lg border border-slate-300 bg-white px-3 py-1 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-          >
-            <option value="timeline">Timeline (Org, Role, Dates, Bullets)</option>
-            <option value="record">Record (Title, Issuer, Date, Link)</option>
-            <option value="tags">Tags (Skill Group, Chip List)</option>
-          </select>
+      {/* Category Selection */}
+      <div className="space-y-1.5">
+        <Label>Category</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.value}
+              type="button"
+              onClick={() => handleCategoryChange(cat.value)}
+              className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                category === cat.value
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Dynamic Content Fields based on Layout */}
+      {/* Layout Selection */}
+      <div className="space-y-1.5">
+        <Label>Display Layout</Label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            {
+              id: "timeline" as VaultLayout,
+              title: "Timeline",
+              desc: "Role, org, dates, bullets",
+            },
+            {
+              id: "record" as VaultLayout,
+              title: "Record",
+              desc: "Title, issuer, link, date",
+            },
+            {
+              id: "tags" as VaultLayout,
+              title: "Tags",
+              desc: "Category & skills group",
+            },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setLayout(item.id)}
+              className={`p-2 rounded-lg border text-left transition-all ${
+                layout === item.id
+                  ? "border-indigo-600 bg-indigo-50/50 ring-1 ring-indigo-600"
+                  : "border-slate-200 hover:border-slate-300 bg-white"
+              }`}
+            >
+              <div className="font-semibold text-xs text-slate-900">
+                {item.title}
+              </div>
+              <div className="text-[10px] text-slate-500">{item.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Layout Dynamic Form Fields */}
       {layout === "timeline" && (
-        <div className="space-y-4 pt-2 border-t border-slate-100">
+        <div className="space-y-3 pt-2 border-t border-slate-100">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="timelineTitle">Title / Role / Degree *</Label>
+              <Label htmlFor="timelineTitle">
+                {category === "project"
+                  ? "Project Name *"
+                  : category === "education"
+                  ? "Degree / Certificate *"
+                  : "Title / Role *"}
+              </Label>
               <Input
                 id="timelineTitle"
                 required
-                placeholder="e.g. Data Intern, B.Sc. Computer Science"
+                placeholder={
+                  category === "project"
+                    ? "e.g. ResumeOS Prototype"
+                    : category === "education"
+                    ? "e.g. B.Sc. in Computer Science"
+                    : "e.g. Senior Data Analyst"
+                }
                 value={timelineTitle}
                 onChange={(e) => setTimelineTitle(e.target.value)}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="timelineOrg">Organization / Company / School *</Label>
+              <Label htmlFor="timelineOrg">
+                {category === "project"
+                  ? "Tech Stack / Technologies *"
+                  : category === "education"
+                  ? "Institution / University *"
+                  : "Organization / Company *"}
+              </Label>
               <Input
                 id="timelineOrg"
                 required
-                placeholder="e.g. CIB, Cairo University"
+                placeholder={
+                  category === "project"
+                    ? "e.g. Next.js, TypeScript, Tailwind, SQLite"
+                    : category === "education"
+                    ? "e.g. Ain Shams University"
+                    : "e.g. Acme Corp"
+                }
                 value={timelineOrg}
                 onChange={(e) => setTimelineOrg(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="timelineStartDate">Start Date</Label>
               <Input
@@ -338,7 +410,7 @@ function VaultItemInnerForm({
               <Label htmlFor="timelineEndDate">End Date</Label>
               <Input
                 id="timelineEndDate"
-                placeholder="e.g. Present, Sep 2025"
+                placeholder="e.g. Present"
                 value={timelineEndDate}
                 onChange={(e) => setTimelineEndDate(e.target.value)}
               />
@@ -354,28 +426,45 @@ function VaultItemInnerForm({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="timelineLink">
-              {category === "project"
-                ? "GitHub Repository / Project URL (Optional)"
-                : "Company / Role / Certificate URL (Optional)"}
-            </Label>
-            <Input
-              id="timelineLink"
-              placeholder={
-                category === "project"
-                  ? "https://github.com/username/project"
-                  : "https://example.com"
-              }
-              value={timelineLink}
-              onChange={(e) => setTimelineLink(e.target.value)}
-            />
-            <p className="text-[11px] text-slate-500">
-              {category === "project"
-                ? "Clickable GitHub link shown on the right and on the project heading."
-                : "Allows recruiters to click on the title without showing an underline on the resume."}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-1.5">
+              <Label htmlFor="timelineLink">
+                {category === "project"
+                  ? "Project / Repository URL (Optional)"
+                  : "Company / Role / Certificate URL (Optional)"}
+              </Label>
+              <Input
+                id="timelineLink"
+                placeholder={
+                  category === "project"
+                    ? "https://github.com/username/project"
+                    : "https://example.com"
+                }
+                value={timelineLink}
+                onChange={(e) => setTimelineLink(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="timelineLinkLabel">
+                Link Title / Label
+              </Label>
+              <Input
+                id="timelineLinkLabel"
+                placeholder={
+                  category === "project"
+                    ? (timelineLink.includes("github.com") ? "GitHub" : "Link")
+                    : "Link"
+                }
+                value={timelineLinkLabel}
+                onChange={(e) => setTimelineLinkLabel(e.target.value)}
+              />
+            </div>
           </div>
+          <p className="text-[11px] text-slate-500 -mt-2">
+            {category === "project"
+              ? "Display text shown on the resume for this project link (e.g. GitHub, Live Demo, Website, Paper)."
+              : "Allows recruiters to click on the title without showing an underline on the resume."}
+          </p>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -398,25 +487,28 @@ function VaultItemInnerForm({
                     {idx + 1}.
                   </span>
                   <Input
+                    placeholder="Describe impact, metrics, or technical achievement..."
                     value={bullet}
                     onChange={(e) => handleUpdateBullet(idx, e.target.value)}
-                    placeholder="Action verb + context + measurable result..."
-                    className="flex-1 text-xs"
+                    className="flex-1"
                   />
                   {timelineBullets.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => handleRemoveBullet(idx)}
-                      className="h-8 w-8 text-slate-400 hover:text-red-600"
+                      className="h-9 w-9 p-0 text-slate-400 hover:text-red-600"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
               ))}
             </div>
+            <p className="text-[11px] text-slate-500">
+              Tip: You can use bold syntax like **2M+ articles** or **Power BI** to highlight key results.
+            </p>
           </div>
         </div>
       )}
@@ -429,7 +521,7 @@ function VaultItemInnerForm({
               <Input
                 id="recordTitle"
                 required
-                placeholder="e.g. Google Data Analytics Certificate"
+                placeholder="e.g. AWS Certified Data Engineer"
                 value={recordTitle}
                 onChange={(e) => setRecordTitle(e.target.value)}
               />
@@ -445,7 +537,7 @@ function VaultItemInnerForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="recordDate">Date / Year</Label>
               <Input
@@ -456,12 +548,21 @@ function VaultItemInnerForm({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="recordLink">Credential / External Link</Label>
+              <Label htmlFor="recordLink">Credential / Link</Label>
               <Input
                 id="recordLink"
                 placeholder="https://..."
                 value={recordLink}
                 onChange={(e) => setRecordLink(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="recordLinkLabel">Link Title</Label>
+              <Input
+                id="recordLinkLabel"
+                placeholder="Certificate"
+                value={recordLinkLabel}
+                onChange={(e) => setRecordLinkLabel(e.target.value)}
               />
             </div>
           </div>

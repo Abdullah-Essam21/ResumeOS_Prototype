@@ -123,6 +123,11 @@ function OverrideForm({
     currentOverrides.link !== undefined ? String(currentOverrides.link) : ""
   );
 
+  const originalLinkLabel = timelineContent?.linkLabel || recordContent?.linkLabel || "";
+  const [overrideLinkLabel, setOverrideLinkLabel] = React.useState<string>(
+    currentOverrides.linkLabel !== undefined ? String(currentOverrides.linkLabel) : ""
+  );
+
   // Record Issuer & Date & Description
   const originalIssuer = recordContent?.issuer || "";
   const [overrideIssuer, setOverrideIssuer] = React.useState<string>(
@@ -171,6 +176,7 @@ function OverrideForm({
     setOverrideStartDate("");
     setOverrideEndDate("");
     setOverrideLink("");
+    setOverrideLinkLabel("");
     setOverrideIssuer("");
     setOverrideDate("");
     setOverrideDescription("");
@@ -200,6 +206,9 @@ function OverrideForm({
     }
     if (overrideLink.trim() && overrideLink.trim() !== originalLink) {
       newOverrides.link = overrideLink.trim();
+    }
+    if (overrideLinkLabel.trim() && overrideLinkLabel.trim() !== originalLinkLabel) {
+      newOverrides.linkLabel = overrideLinkLabel.trim();
     }
     if (overrideIssuer.trim() && overrideIssuer.trim() !== originalIssuer) {
       (newOverrides as Record<string, unknown>).issuer = overrideIssuer.trim();
@@ -258,7 +267,7 @@ function OverrideForm({
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <Label htmlFor="overrideTitle" className="text-xs">
-                {isProject ? "Project Name" : "Title / Role"}
+                {isProject ? "Project Name" : "Role / Title"}
               </Label>
               {overrideTitle && (
                 <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
@@ -273,7 +282,7 @@ function OverrideForm({
             />
           </div>
 
-          {/* Organization / Tech Stack */}
+          {/* Org / Technologies */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <Label htmlFor="overrideOrg" className="text-xs">
@@ -295,27 +304,42 @@ function OverrideForm({
           {/* Dates & Location */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div className="space-y-1">
-              <Label htmlFor="overrideStartDate" className="text-xs">Start Date</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideStartDate" className="text-xs">Start Date</Label>
+                {overrideStartDate && (
+                  <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
+                )}
+              </div>
               <Input
                 id="overrideStartDate"
                 value={overrideStartDate}
                 onChange={(e) => setOverrideStartDate(e.target.value)}
-                placeholder={originalStartDate ? `Default: "${originalStartDate}"` : "e.g. Jun 2025"}
+                placeholder={originalStartDate ? `Default: "${originalStartDate}"` : "e.g. 2024"}
                 className="text-xs"
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="overrideEndDate" className="text-xs">End Date</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideEndDate" className="text-xs">End Date</Label>
+                {overrideEndDate && (
+                  <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
+                )}
+              </div>
               <Input
                 id="overrideEndDate"
                 value={overrideEndDate}
                 onChange={(e) => setOverrideEndDate(e.target.value)}
-                placeholder={originalEndDate ? `Default: "${originalEndDate}"` : "e.g. Feb 2026"}
+                placeholder={originalEndDate ? `Default: "${originalEndDate}"` : "e.g. Present"}
                 className="text-xs"
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="overrideLocation" className="text-xs">Location / Note</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideLocation" className="text-xs">Location / Subtitle</Label>
+                {overrideLocation && (
+                  <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
+                )}
+              </div>
               <Input
                 id="overrideLocation"
                 value={overrideLocation}
@@ -326,23 +350,45 @@ function OverrideForm({
             </div>
           </div>
 
-          {/* Link URL */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="overrideLink" className="text-xs">
-                {isProject ? "Project / GitHub URL" : "Role / Organization URL"}
-              </Label>
-              {overrideLink && (
-                <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
-              )}
+          {/* Link URL & Label */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-1">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideLink" className="text-xs">
+                  {isProject ? "Project URL" : "Role / Organization URL"}
+                </Label>
+                {overrideLink && (
+                  <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
+                )}
+              </div>
+              <Input
+                id="overrideLink"
+                value={overrideLink}
+                onChange={(e) => setOverrideLink(e.target.value)}
+                placeholder={originalLink ? `Default: "${originalLink}"` : "https://..."}
+                className="text-xs"
+              />
             </div>
-            <Input
-              id="overrideLink"
-              value={overrideLink}
-              onChange={(e) => setOverrideLink(e.target.value)}
-              placeholder={originalLink ? `Default: "${originalLink}"` : "https://..."}
-              className="text-xs"
-            />
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideLinkLabel" className="text-xs">
+                  Link Title
+                </Label>
+                {overrideLinkLabel && (
+                  <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
+                )}
+              </div>
+              <Input
+                id="overrideLinkLabel"
+                value={overrideLinkLabel}
+                onChange={(e) => setOverrideLinkLabel(e.target.value)}
+                placeholder={
+                  originalLinkLabel ||
+                  ((overrideLink || originalLink).includes("github.com") ? "GitHub" : "Link")
+                }
+                className="text-xs"
+              />
+            </div>
           </div>
 
           {/* Accomplishment Bullets */}
@@ -364,7 +410,7 @@ function OverrideForm({
                       setOverrideBullets([...originalBullets]);
                       setHasCustomBullets(false);
                     }}
-                    className="h-6 text-[10px] text-slate-400 hover:text-slate-700"
+                    className="h-6 text-[11px] text-slate-500 hover:text-slate-800"
                   >
                     Reset Bullets
                   </Button>
@@ -377,7 +423,7 @@ function OverrideForm({
                     setHasCustomBullets(true);
                     setOverrideBullets((prev) => [...prev, ""]);
                   }}
-                  className="h-6 text-xs px-2"
+                  className="h-6 text-[11px]"
                 >
                   <Plus className="h-3 w-3 mr-1" />
                   Add Bullet
@@ -385,17 +431,17 @@ function OverrideForm({
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {overrideBullets.map((bullet, idx) => (
                 <div key={idx} className="flex items-start gap-1.5">
-                  <span className="text-xs text-slate-400 mt-2 font-mono">
+                  <span className="text-[11px] text-slate-400 mt-2 font-mono">
                     {idx + 1}.
                   </span>
                   <Textarea
                     value={bullet}
                     onChange={(e) => {
-                      setHasCustomBullets(true);
                       const val = e.target.value;
+                      setHasCustomBullets(true);
                       setOverrideBullets((prev) => {
                         const copy = [...prev];
                         copy[idx] = val;
@@ -464,15 +510,27 @@ function OverrideForm({
             </div>
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="overrideLink" className="text-xs">Credential Link</Label>
-            <Input
-              id="overrideLink"
-              value={overrideLink}
-              onChange={(e) => setOverrideLink(e.target.value)}
-              placeholder={originalLink ? `Default: "${originalLink}"` : "https://..."}
-              className="text-xs"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div className="sm:col-span-2 space-y-1">
+              <Label htmlFor="overrideLink" className="text-xs">Credential Link</Label>
+              <Input
+                id="overrideLink"
+                value={overrideLink}
+                onChange={(e) => setOverrideLink(e.target.value)}
+                placeholder={originalLink ? `Default: "${originalLink}"` : "https://..."}
+                className="text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="overrideLinkLabel" className="text-xs">Link Title</Label>
+              <Input
+                id="overrideLinkLabel"
+                value={overrideLinkLabel}
+                onChange={(e) => setOverrideLinkLabel(e.target.value)}
+                placeholder={originalLinkLabel || "Certificate"}
+                className="text-xs"
+              />
+            </div>
           </div>
 
           <div className="space-y-1">

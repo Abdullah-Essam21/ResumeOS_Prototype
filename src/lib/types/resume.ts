@@ -12,6 +12,7 @@ export const ResumeItemOverridesSchema = z.object({
   endDate: z.string().optional(),
   location: z.string().optional(),
   link: z.string().optional(),
+  linkLabel: z.string().optional(),
   tags: z.array(z.string()).optional(),
 }).catchall(z.unknown());
 
