@@ -179,6 +179,20 @@ async function runPhase7Tests() {
     "SQL Window Functions",
   ]);
 
+  // 8. Verify overriding a field to empty string "" successfully removes it from resolvedContent
+  console.log("Test 8: Overriding a field to empty string removes it from resolved content");
+  expSectionB.items[0].overrides = {
+    ...expSectionB.items[0].overrides,
+    location: "", // Explicitly removed location on this variant
+  };
+  const snapshotBBlank = resolveResumeSnapshot(
+    { ...updatedResumeB, draft: draftB },
+    profile,
+    [originalVaultExperience, originalVaultProject, originalVaultSkill]
+  );
+  const resolvedBlankExp = snapshotBBlank.sections.find((s) => s.type === "experience")!.items[0];
+  assert.equal(resolvedBlankExp.resolvedContent.location, "", "Location should be blank in resolved content");
+
   console.log("✓ All Phase 7 Resume-Specific Overrides tests passed successfully!");
 }
 

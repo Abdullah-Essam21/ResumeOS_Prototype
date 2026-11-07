@@ -45,7 +45,7 @@ export function resolveResumeSnapshot(
         // Clean overrides: only include defined, non-empty keys
         const effectiveOverrides: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(overrides)) {
-          if (value !== undefined && value !== null && value !== "") {
+          if (value !== undefined && value !== null) {
             effectiveOverrides[key] = value;
           }
         }

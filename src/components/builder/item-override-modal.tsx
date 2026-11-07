@@ -166,73 +166,84 @@ function OverrideForm({
     if (Array.isArray(currentOverrides.tags)) {
       return currentOverrides.tags.join(", ");
     }
-    return "";
+    return originalTags.join(", ");
   });
 
   const handleResetAll = () => {
-    setOverrideTitle("");
-    setOverrideOrg("");
-    setOverrideLocation("");
-    setOverrideStartDate("");
-    setOverrideEndDate("");
-    setOverrideLink("");
-    setOverrideLinkLabel("");
-    setOverrideIssuer("");
-    setOverrideDate("");
-    setOverrideDescription("");
-    setOverrideBullets([...originalBullets]);
+    setOverrideTitle(originalTitle);
+    setOverrideOrg(originalOrg);
+    setOverrideLocation(originalLocation);
+    setOverrideStartDate(originalStartDate);
+    setOverrideEndDate(originalEndDate);
+    setOverrideLink(originalLink);
+    setOverrideLinkLabel(originalLinkLabel);
+    setOverrideIssuer(originalIssuer);
+    setOverrideDate(originalDate);
+    setOverrideDescription(originalDescription);
+    setOverrideBullets(originalBullets.length > 0 ? [...originalBullets] : [""]);
     setHasCustomBullets(false);
-    setOverrideTagsString("");
+    setOverrideTagsString(originalTags.join(", "));
   };
+
+  const isTitleOverridden = overrideTitle.trim() !== originalTitle;
+  const isOrgOverridden = overrideOrg.trim() !== originalOrg;
+  const isLocationOverridden = overrideLocation.trim() !== originalLocation;
+  const isStartDateOverridden = overrideStartDate.trim() !== originalStartDate;
+  const isEndDateOverridden = overrideEndDate.trim() !== originalEndDate;
+  const isLinkOverridden = overrideLink.trim() !== originalLink;
+  const isLinkLabelOverridden = overrideLinkLabel.trim() !== originalLinkLabel;
+  const isIssuerOverridden = overrideIssuer.trim() !== originalIssuer;
+  const isDateOverridden = overrideDate.trim() !== originalDate;
+  const isDescriptionOverridden = overrideDescription.trim() !== originalDescription;
+  const isTagsOverridden = overrideTagsString.trim() !== originalTags.join(", ");
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     const newOverrides: ResumeItemOverrides = {};
 
-    if (overrideTitle.trim() && overrideTitle.trim() !== originalTitle) {
+    if (overrideTitle.trim() !== originalTitle) {
       newOverrides.title = overrideTitle.trim();
     }
-    if (overrideOrg.trim() && overrideOrg.trim() !== originalOrg) {
+    if (overrideOrg.trim() !== originalOrg) {
       newOverrides.organization = overrideOrg.trim();
     }
-    if (overrideLocation.trim() && overrideLocation.trim() !== originalLocation) {
+    if (overrideLocation.trim() !== originalLocation) {
       newOverrides.location = overrideLocation.trim();
     }
-    if (overrideStartDate.trim() && overrideStartDate.trim() !== originalStartDate) {
+    if (overrideStartDate.trim() !== originalStartDate) {
       newOverrides.startDate = overrideStartDate.trim();
     }
-    if (overrideEndDate.trim() && overrideEndDate.trim() !== originalEndDate) {
+    if (overrideEndDate.trim() !== originalEndDate) {
       newOverrides.endDate = overrideEndDate.trim();
     }
-    if (overrideLink.trim() && overrideLink.trim() !== originalLink) {
+    if (overrideLink.trim() !== originalLink) {
       newOverrides.link = overrideLink.trim();
     }
-    if (overrideLinkLabel.trim() && overrideLinkLabel.trim() !== originalLinkLabel) {
+    if (overrideLinkLabel.trim() !== originalLinkLabel) {
       newOverrides.linkLabel = overrideLinkLabel.trim();
     }
     if (overrideIssuer.trim() !== originalIssuer) {
-      (newOverrides as Record<string, unknown>).issuer = overrideIssuer.trim();
+      newOverrides.issuer = overrideIssuer.trim();
     }
     if (overrideDate.trim() !== originalDate) {
-      (newOverrides as Record<string, unknown>).date = overrideDate.trim();
+      newOverrides.date = overrideDate.trim();
     }
-    if (overrideDescription.trim() && overrideDescription.trim() !== originalDescription) {
+    if (overrideDescription.trim() !== originalDescription) {
       newOverrides.description = overrideDescription.trim();
     }
 
-    if (hasCustomBullets) {
-      const cleaned = overrideBullets.map((b) => b.trim()).filter((b) => b.length > 0);
-      newOverrides.bullets = cleaned;
+    const cleanedBullets = overrideBullets.map((b) => b.trim()).filter((b) => b.length > 0);
+    const bulletsDiffer = JSON.stringify(cleanedBullets) !== JSON.stringify(originalBullets.map((b) => b.trim()).filter((b) => b.length > 0));
+    if (hasCustomBullets || bulletsDiffer) {
+      newOverrides.bullets = cleanedBullets;
     }
 
-    if (overrideTagsString.trim()) {
-      const cleanedTags = overrideTagsString
-        .split(",")
-        .map((t) => t.trim())
-        .filter((t) => t.length > 0);
-      if (cleanedTags.join(", ") !== originalTags.join(", ")) {
-        newOverrides.tags = cleanedTags;
-      }
+    const cleanedTags = overrideTagsString
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    if (cleanedTags.join(", ") !== originalTags.join(", ")) {
+      newOverrides.tags = cleanedTags;
     }
 
     onSave(newOverrides);
@@ -269,7 +280,7 @@ function OverrideForm({
               <Label htmlFor="overrideTitle" className="text-xs">
                 {isProject ? "Project Name" : "Role / Title"}
               </Label>
-              {overrideTitle && (
+              {isTitleOverridden && (
                 <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
               )}
             </div>
@@ -288,7 +299,7 @@ function OverrideForm({
               <Label htmlFor="overrideOrg" className="text-xs">
                 {isProject ? "Tech Stack / Technologies" : "Company / Organization"}
               </Label>
-              {overrideOrg && (
+              {isOrgOverridden && (
                 <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
               )}
             </div>
@@ -306,7 +317,7 @@ function OverrideForm({
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <Label htmlFor="overrideStartDate" className="text-xs">Start Date</Label>
-                {overrideStartDate && (
+                {isStartDateOverridden && (
                   <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
                 )}
               </div>
@@ -321,7 +332,7 @@ function OverrideForm({
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <Label htmlFor="overrideEndDate" className="text-xs">End Date</Label>
-                {overrideEndDate && (
+                {isEndDateOverridden && (
                   <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
                 )}
               </div>
@@ -336,7 +347,7 @@ function OverrideForm({
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <Label htmlFor="overrideLocation" className="text-xs">Location / Subtitle</Label>
-                {overrideLocation && (
+                {isLocationOverridden && (
                   <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
                 )}
               </div>
@@ -357,7 +368,7 @@ function OverrideForm({
                 <Label htmlFor="overrideLink" className="text-xs">
                   {isProject ? "Project URL" : "Role / Organization URL"}
                 </Label>
-                {overrideLink && (
+                {isLinkOverridden && (
                   <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
                 )}
               </div>
@@ -374,7 +385,7 @@ function OverrideForm({
                 <Label htmlFor="overrideLinkLabel" className="text-xs">
                   Link Title
                 </Label>
-                {overrideLinkLabel && (
+                {isLinkLabelOverridden && (
                   <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>
                 )}
               </div>
@@ -477,7 +488,10 @@ function OverrideForm({
       {isRecord && (
         <div className="space-y-3.5">
           <div className="space-y-1">
-            <Label htmlFor="overrideTitle" className="text-xs">Title / Certification</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="overrideTitle" className="text-xs">Title / Certification</Label>
+              {isTitleOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+            </div>
             <Input
               id="overrideTitle"
               value={overrideTitle}
@@ -489,7 +503,10 @@ function OverrideForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
-              <Label htmlFor="overrideIssuer" className="text-xs">Issuer / Organization</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideIssuer" className="text-xs">Issuer / Organization</Label>
+                {isIssuerOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+              </div>
               <Input
                 id="overrideIssuer"
                 value={overrideIssuer}
@@ -499,7 +516,10 @@ function OverrideForm({
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="overrideDate" className="text-xs">Date / Year</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideDate" className="text-xs">Date / Year</Label>
+                {isDateOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+              </div>
               <Input
                 id="overrideDate"
                 value={overrideDate}
@@ -512,7 +532,10 @@ function OverrideForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div className="sm:col-span-2 space-y-1">
-              <Label htmlFor="overrideLink" className="text-xs">Credential Link</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideLink" className="text-xs">Credential Link</Label>
+                {isLinkOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+              </div>
               <Input
                 id="overrideLink"
                 value={overrideLink}
@@ -522,7 +545,10 @@ function OverrideForm({
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="overrideLinkLabel" className="text-xs">Link Title</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="overrideLinkLabel" className="text-xs">Link Title</Label>
+                {isLinkLabelOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+              </div>
               <Input
                 id="overrideLinkLabel"
                 value={overrideLinkLabel}
@@ -534,7 +560,10 @@ function OverrideForm({
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="overrideDesc" className="text-xs">Description</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="overrideDesc" className="text-xs">Description</Label>
+              {isDescriptionOverridden && <span className="text-[10px] text-indigo-600 font-medium">Overridden</span>}
+            </div>
             <Textarea
               id="overrideDesc"
               value={overrideDescription}
